@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +9,8 @@ const equipment = [
   {
     id: 1,
     name: 'Professional Tennis Racket',
-    image: 'https://images.unsplash.com/photo-1617664455551-bf346a91439d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/equipment/tennis-racket.jpg',
+    fallbackImage: '/placeholder.svg',
     brand: 'Wilson Pro',
     category: 'Tennis',
     pricePerDay: 15,
@@ -20,7 +20,8 @@ const equipment = [
   {
     id: 2,
     name: 'Mountain Bike',
-    image: 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/equipment/mountain-bike.jpg',
+    fallbackImage: '/placeholder.svg',
     brand: 'Trek',
     category: 'Cycling',
     pricePerDay: 35,
@@ -30,7 +31,8 @@ const equipment = [
   {
     id: 3,
     name: 'Golf Club Set',
-    image: 'https://images.unsplash.com/photo-1535131749006-b7d58e7ffca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/equipment/golf-set.jpg',
+    fallbackImage: '/placeholder.svg',
     brand: 'Callaway',
     category: 'Golf',
     pricePerDay: 45,
@@ -40,7 +42,8 @@ const equipment = [
   {
     id: 4,
     name: 'Basketball',
-    image: 'https://images.unsplash.com/photo-1612118745260-9d083b54c8a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/equipment/basketball.jpg',
+    fallbackImage: '/placeholder.svg',
     brand: 'Spalding',
     category: 'Basketball',
     pricePerDay: 8,
@@ -50,7 +53,8 @@ const equipment = [
   {
     id: 5,
     name: 'Yoga Mat & Set',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/equipment/yoga-set.jpg',
+    fallbackImage: '/placeholder.svg',
     brand: 'Lululemon',
     category: 'Yoga',
     pricePerDay: 10,
@@ -60,7 +64,8 @@ const equipment = [
   {
     id: 6,
     name: 'Camping Equipment Set',
-    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/equipment/camping-set.jpg',
+    fallbackImage: '/placeholder.svg',
     brand: 'North Face',
     category: 'Camping',
     pricePerDay: 55,
@@ -72,6 +77,7 @@ const equipment = [
 export default function EquipmentRental() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredEquipment, setFilteredEquipment] = useState(equipment);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -87,6 +93,10 @@ export default function EquipmentRental() {
       );
       setFilteredEquipment(filtered);
     }
+  };
+
+  const handleImageError = (itemId: number) => {
+    setImageErrors(prev => ({ ...prev, [itemId]: true }));
   };
 
   return (
@@ -112,11 +122,12 @@ export default function EquipmentRental() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredEquipment.map((item) => (
           <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-fade-in">
-            <div className="aspect-video relative overflow-hidden">
+            <div className="aspect-video relative overflow-hidden bg-muted">
               <img 
-                src={item.image} 
+                src={imageErrors[item.id] ? item.fallbackImage : item.image} 
                 alt={item.name} 
                 className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                onError={() => handleImageError(item.id)}
               />
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
                 <Star className="h-3 w-3 fill-sportnexus-orange text-sportnexus-orange" />

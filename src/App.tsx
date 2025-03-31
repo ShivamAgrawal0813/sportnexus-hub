@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import VenueBooking from "./pages/VenueBooking";
 import EquipmentRental from "./pages/EquipmentRental";
 import Tutorials from "./pages/Tutorials";
 import NotFound from "./pages/NotFound";
+import NewLoginPage from "./pages/Auth/NewLoginPage";
 
 // Import layout and auth components
 import MainLayout from "./components/layout/MainLayout";
@@ -28,29 +28,31 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <SidebarProvider>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              
-              {/* Protected routes that use the MainLayout with sidebar */}
-              <Route element={<ProtectedRoute />}>
-                <Route element={<MainLayout />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/venues" element={<VenueBooking />} />
-                  <Route path="/equipment" element={<EquipmentRental />} />
-                  <Route path="/tutorials" element={<Tutorials />} />
-                  <Route path="/profile" element={<Dashboard />} /> {/* Placeholder */}
-                  <Route path="/settings" element={<Dashboard />} /> {/* Placeholder */}
-                </Route>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<NewLoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            
+            {/* Protected routes that use the MainLayout with sidebar */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={
+                <SidebarProvider>
+                  <MainLayout />
+                </SidebarProvider>
+              }>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/venues" element={<VenueBooking />} />
+                <Route path="/equipment" element={<EquipmentRental />} />
+                <Route path="/tutorials" element={<Tutorials />} />
+                <Route path="/profile" element={<Dashboard />} /> {/* Placeholder */}
+                <Route path="/settings" element={<Dashboard />} /> {/* Placeholder */}
               </Route>
-              
-              {/* Catch-all route for 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </SidebarProvider>
+            </Route>
+            
+            {/* Catch-all route for 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

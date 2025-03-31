@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import Hero from '@/components/landing/Hero';
 import Features from '@/components/landing/Features';
@@ -11,10 +10,10 @@ import { Menu, ChevronRight } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden">
       {/* Navigation */}
-      <nav className="bg-white py-4 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 flex items-center justify-between">
+      <nav className="bg-white py-4 sticky top-0 z-50 shadow-sm w-full">
+        <div className="container mx-auto px-4 flex items-center justify-between max-w-7xl">
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-md bg-sportnexus-green flex items-center justify-center text-white font-bold mr-2">
               SN
@@ -56,7 +55,7 @@ export default function LandingPage() {
       </div>
 
       {/* Landing page content */}
-      <div className="flex-1">
+      <div className="flex-1 w-full">
         <Hero />
         <Features />
         <HowItWorks />

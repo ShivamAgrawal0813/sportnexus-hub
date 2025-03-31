@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +9,8 @@ const venues = [
   {
     id: 1,
     name: 'Grand Tennis Court',
-    image: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/venues/tennis-court.jpg',
+    fallbackImage: '/placeholder.svg',
     location: 'Downtown Sports Center',
     type: 'Tennis',
     pricePerHour: 25,
@@ -20,7 +20,8 @@ const venues = [
   {
     id: 2,
     name: 'Olympic Swimming Pool',
-    image: 'https://images.unsplash.com/photo-1576013551627-0ae7d1d6f79e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/venues/swimming-pool.jpg',
+    fallbackImage: '/placeholder.svg',
     location: 'City Sports Complex',
     type: 'Swimming',
     pricePerHour: 15,
@@ -30,7 +31,8 @@ const venues = [
   {
     id: 3,
     name: 'Premier Basketball Court',
-    image: 'https://images.unsplash.com/photo-1505666287802-931dc83a5dc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/venues/basketball-court.jpg',
+    fallbackImage: '/placeholder.svg',
     location: 'Westside Recreation Center',
     type: 'Basketball',
     pricePerHour: 30,
@@ -40,7 +42,8 @@ const venues = [
   {
     id: 4,
     name: 'Indoor Soccer Field',
-    image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/venues/soccer-field.jpg',
+    fallbackImage: '/placeholder.svg',
     location: 'East Valley Sports Hub',
     type: 'Soccer',
     pricePerHour: 40,
@@ -50,7 +53,8 @@ const venues = [
   {
     id: 5,
     name: 'Professional Golf Course',
-    image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/venues/golf-course.jpg',
+    fallbackImage: '/placeholder.svg',
     location: 'Green Valley Golf Club',
     type: 'Golf',
     pricePerHour: 50,
@@ -60,7 +64,8 @@ const venues = [
   {
     id: 6,
     name: 'Yoga & Fitness Studio',
-    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/venues/yoga-studio.jpg',
+    fallbackImage: '/placeholder.svg',
     location: 'Mindful Movement Center',
     type: 'Yoga',
     pricePerHour: 20,
@@ -72,6 +77,7 @@ const venues = [
 export default function VenueBooking() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredVenues, setFilteredVenues] = useState(venues);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -87,6 +93,10 @@ export default function VenueBooking() {
       );
       setFilteredVenues(filtered);
     }
+  };
+
+  const handleImageError = (venueId: number) => {
+    setImageErrors(prev => ({ ...prev, [venueId]: true }));
   };
 
   return (
@@ -112,11 +122,12 @@ export default function VenueBooking() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredVenues.map((venue) => (
           <Card key={venue.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-fade-in">
-            <div className="aspect-video relative overflow-hidden">
+            <div className="aspect-video relative overflow-hidden bg-muted">
               <img 
-                src={venue.image} 
+                src={imageErrors[venue.id] ? venue.fallbackImage : venue.image}
                 alt={venue.name} 
                 className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                onError={() => handleImageError(venue.id)}
               />
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
                 <Star className="h-3 w-3 fill-sportnexus-orange text-sportnexus-orange" />

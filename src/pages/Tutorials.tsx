@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +9,8 @@ const tutorials = [
   {
     id: 1,
     title: 'Tennis Fundamentals for Beginners',
-    image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/tutorials/tennis-fundamentals.jpg',
+    fallbackImage: '/placeholder.svg',
     instructor: 'Sarah Williams',
     category: 'Tennis',
     level: 'Beginner',
@@ -22,7 +22,8 @@ const tutorials = [
   {
     id: 2,
     title: 'Advanced Basketball Shooting Techniques',
-    image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/tutorials/basketball-shooting.jpg',
+    fallbackImage: '/placeholder.svg',
     instructor: 'Michael Jordan',
     category: 'Basketball',
     level: 'Advanced',
@@ -34,7 +35,8 @@ const tutorials = [
   {
     id: 3,
     title: 'Yoga for Athletes: Improving Flexibility',
-    image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/tutorials/yoga-flexibility.jpg',
+    fallbackImage: '/placeholder.svg',
     instructor: 'Emma Chen',
     category: 'Yoga',
     level: 'Intermediate',
@@ -46,7 +48,8 @@ const tutorials = [
   {
     id: 4,
     title: 'Golf Swing Mastery',
-    image: 'https://images.unsplash.com/photo-1535131749006-b7d58e7ffca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/tutorials/golf-swing.jpg',
+    fallbackImage: '/placeholder.svg',
     instructor: 'Tiger Woods',
     category: 'Golf',
     level: 'Intermediate',
@@ -58,7 +61,8 @@ const tutorials = [
   {
     id: 5,
     title: 'Swimming Techniques for Beginners',
-    image: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/tutorials/swimming-basics.jpg',
+    fallbackImage: '/placeholder.svg',
     instructor: 'Michael Phelps',
     category: 'Swimming',
     level: 'Beginner',
@@ -70,7 +74,8 @@ const tutorials = [
   {
     id: 6,
     title: 'Marathon Training Guide',
-    image: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/images/tutorials/marathon-training.jpg',
+    fallbackImage: '/placeholder.svg',
     instructor: 'Eliud Kipchoge',
     category: 'Running',
     level: 'All Levels',
@@ -84,6 +89,7 @@ const tutorials = [
 export default function Tutorials() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTutorials, setFilteredTutorials] = useState(tutorials);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -100,6 +106,10 @@ export default function Tutorials() {
       );
       setFilteredTutorials(filtered);
     }
+  };
+
+  const handleImageError = (tutorialId: number) => {
+    setImageErrors(prev => ({ ...prev, [tutorialId]: true }));
   };
 
   return (
@@ -125,11 +135,12 @@ export default function Tutorials() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTutorials.map((tutorial) => (
           <Card key={tutorial.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-fade-in">
-            <div className="aspect-video relative overflow-hidden">
+            <div className="aspect-video relative overflow-hidden bg-muted">
               <img 
-                src={tutorial.image} 
+                src={imageErrors[tutorial.id] ? tutorial.fallbackImage : tutorial.image}
                 alt={tutorial.title} 
                 className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                onError={() => handleImageError(tutorial.id)}
               />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                 <Button variant="secondary" size="icon" className="rounded-full h-12 w-12">

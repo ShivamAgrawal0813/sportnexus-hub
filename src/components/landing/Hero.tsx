@@ -1,12 +1,11 @@
-
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Hero() {
   return (
-    <div className="relative bg-white section-padding">
-      <div className="container mx-auto">
+    <div className="relative bg-white section-padding w-full overflow-hidden">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-2 lg:gap-x-12 lg:items-center">
           <div className="text-center lg:text-left max-w-xl mx-auto lg:mx-0">
             <h1 className="text-sportnexus-darkGray font-bold tracking-tight animate-fade-in">
@@ -29,7 +28,7 @@ export default function Hero() {
               </Button>
             </div>
           </div>
-          <div className="lg:pl-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <div className="lg:pl-8 animate-fade-in w-full" style={{ animationDelay: '0.3s' }}>
             <div className="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
               <img 
                 src="https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
