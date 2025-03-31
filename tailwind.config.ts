@@ -66,15 +66,16 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// SportNexus colors
+				// SportNexus minimalistic colors
 				sportnexus: {
-					blue: '#2C3E50',
-					green: '#27AE60',
-					orange: '#F39C12',
-					lightBlue: '#3498db',
-					darkBlue: '#1a2530',
-					lightGreen: '#2ecc71',
-					lightOrange: '#f5b041'
+					green: '#00B964',
+					lightGreen: '#33C982',
+					darkGreen: '#009E55',
+					gray: '#F7F7F7',
+					darkGray: '#333333',
+					lightGray: '#F3F3F3',
+					white: '#FFFFFF',
+					black: '#222222'
 				}
 			},
 			borderRadius: {
