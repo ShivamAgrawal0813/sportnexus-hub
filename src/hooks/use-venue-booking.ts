@@ -55,7 +55,7 @@ export function useVenueBooking() {
         total_price: totalPrice,
         status: 'pending' as BookingStatus,
         payment_status: 'pending' as const,
-        payment_id: null, // Add missing payment_id property
+        payment_id: null, // Add the missing payment_id property
         notes: notes || null
       };
 

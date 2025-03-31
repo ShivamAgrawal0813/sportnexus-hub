@@ -55,8 +55,8 @@ export default function UserBookingList() {
   return (
     <div className="space-y-4">
       {userBookings.map((booking) => {
-        // Fix: Properly type and access venue information 
-        const venue = booking.venue_details || { 
+        // Fix: Access venue_details instead of venues
+        const venueDetails = booking.venue_details || { 
           name: 'Venue', 
           location: 'Location not available',
           sport_type: '',
@@ -71,10 +71,10 @@ export default function UserBookingList() {
             <div className="flex flex-col md:flex-row">
               {/* Venue image */}
               <div className="w-full md:w-1/4">
-                {venue?.images?.[0] ? (
+                {venueDetails.images && venueDetails.images[0] ? (
                   <img 
-                    src={venue.images[0]} 
-                    alt={venue.name} 
+                    src={venueDetails.images[0]} 
+                    alt={venueDetails.name} 
                     className="h-full w-full object-cover aspect-[4/3] md:aspect-auto"
                   />
                 ) : (
@@ -87,7 +87,7 @@ export default function UserBookingList() {
               {/* Booking details */}
               <div className="p-4 flex-1">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h3 className="text-lg font-semibold">{venue?.name || 'Venue'}</h3>
+                  <h3 className="text-lg font-semibold">{venueDetails.name}</h3>
                   <Badge className={`${getStatusColor(booking.status)} self-start`}>
                     {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                   </Badge>
@@ -96,7 +96,7 @@ export default function UserBookingList() {
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-1" />
-                    <span>{venue?.location || 'Location not available'}</span>
+                    <span>{venueDetails.location}</span>
                   </div>
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />

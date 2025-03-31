@@ -44,10 +44,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
       
-      setProfile(data as Profile);
-      // Safely access the role property, or default to 'user'
-      setUserRole((data as any)?.role as UserRole || 'user');
-      return data;
+      // Since we're using mock data for development, assume the extended Profile type
+      const userProfile = data as Profile;
+      setProfile(userProfile);
+      
+      // Set user role from the profile
+      setUserRole(userProfile?.role || 'user');
+      
+      return userProfile;
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       return null;
