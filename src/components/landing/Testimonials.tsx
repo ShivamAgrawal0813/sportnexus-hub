@@ -4,7 +4,7 @@ import { Star } from 'lucide-react';
 const testimonials = [
   {
     id: 1,
-    quote: 'SportNexus has completely changed how I access sports facilities. Booking courts used to be such a hassle, but now it's just a few clicks away!',
+    quote: 'SportNexus has completely changed how I access sports facilities. Booking courts used to be such a hassle, but now it\'s just a few clicks away!',
     name: 'Sarah Johnson',
     role: 'Tennis Enthusiast',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',

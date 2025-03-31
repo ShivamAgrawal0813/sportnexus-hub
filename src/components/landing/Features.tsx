@@ -12,7 +12,7 @@ const features = [
   {
     name: 'Equipment Rental',
     description:
-      'Browse and rent quality sports equipment for any activity. From tennis rackets to camping gear, we've got you covered.',
+      'Browse and rent quality sports equipment for any activity. From tennis rackets to camping gear, we\'ve got you covered.',
     icon: ShoppingBag,
     color: 'bg-sportnexus-green',
   },
