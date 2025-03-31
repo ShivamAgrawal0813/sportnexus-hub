@@ -1,10 +1,10 @@
 
 import { Database } from '@/integrations/supabase/types';
 
-// Extend the Profile type to include role
-export interface Profile extends Database['public']['Tables']['profiles']['Row'] {
+// Define the Profile type based on the database schema
+export type Profile = Database['public']['Tables']['profiles']['Row'] & {
   role?: UserRole;
-}
+};
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';

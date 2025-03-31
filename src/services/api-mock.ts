@@ -1,4 +1,3 @@
-
 import { toast } from '@/hooks/use-toast';
 import {
   Venue,
@@ -9,21 +8,30 @@ import {
   TutorialLesson,
   UserTutorialProgress,
   Notification,
-  BookingStatus
+  BookingStatus,
+  TutorialProgress
 } from '@/types/supabase';
 import { 
   generateMockBooking, 
   generateMockEquipment, 
   generateMockRental, 
   generateMockVenue,
-  generateMockId
+  generateMockId,
+  handleError,
+  handleSuccess
 } from './api-helper';
+import { mockNotifications, mockTutorials, mockTutorialLessons, mockUserProgress } from './mock-data';
+import { supabase } from '@/integrations/supabase/client';
 
 // Local storage keys for simulating database tables
 const STORAGE_VENUES = 'sport_nexus_venues';
 const STORAGE_BOOKINGS = 'sport_nexus_bookings';
 const STORAGE_EQUIPMENT = 'sport_nexus_equipment';
 const STORAGE_RENTALS = 'sport_nexus_rentals';
+const STORAGE_NOTIFICATIONS = 'sport_nexus_notifications';
+const STORAGE_TUTORIALS = 'sport_nexus_tutorials';
+const STORAGE_TUTORIAL_LESSONS = 'sport_nexus_tutorial_lessons';
+const STORAGE_USER_PROGRESS = 'sport_nexus_user_progress';
 
 // Helper functions to get and set mock data
 const getMockData = <T>(key: string): T[] => {
@@ -55,6 +63,26 @@ const initMockData = () => {
       generateMockEquipment({ name: 'Soccer Ball', category: 'ball' })
     ];
     setMockData(STORAGE_EQUIPMENT, mockEquipment);
+  }
+
+  // Initialize notifications
+  if (!localStorage.getItem(STORAGE_NOTIFICATIONS)) {
+    setMockData(STORAGE_NOTIFICATIONS, mockNotifications);
+  }
+
+  // Initialize tutorials
+  if (!localStorage.getItem(STORAGE_TUTORIALS)) {
+    setMockData(STORAGE_TUTORIALS, mockTutorials);
+  }
+
+  // Initialize tutorial lessons
+  if (!localStorage.getItem(STORAGE_TUTORIAL_LESSONS)) {
+    setMockData(STORAGE_TUTORIAL_LESSONS, mockTutorialLessons);
+  }
+
+  // Initialize user progress
+  if (!localStorage.getItem(STORAGE_USER_PROGRESS)) {
+    setMockData(STORAGE_USER_PROGRESS, mockUserProgress);
   }
 };
 
@@ -197,5 +225,174 @@ export const getUserRentals = async (userId: string): Promise<EquipmentRental[]>
   return rentals.filter(rental => rental.user_id === userId);
 };
 
-// Re-export all functions from the mock implementation
-export * from './api-mock';
+// Tutorial Management
+export const getTutorialById = async (tutorialId: string): Promise<{ tutorial: Tutorial; lessons: TutorialLesson[] } | null> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  // Get tutorial from mock data or local storage
+  const tutorials = getMockData<Tutorial>(STORAGE_TUTORIALS) || mockTutorials;
+  const tutorial = tutorials.find(t => t.id === tutorialId);
+  
+  if (!tutorial) {
+    return handleError(null, 'Tutorial not found');
+  }
+  
+  // Get lessons for this tutorial
+  const lessons = (getMockData<TutorialLesson>(STORAGE_TUTORIAL_LESSONS) || mockTutorialLessons)
+    .filter(l => l.tutorial_id === tutorialId)
+    .sort((a, b) => a.sequence_order - b.sequence_order);
+  
+  return { tutorial, lessons };
+};
+
+export const getUserTutorialProgress = async (userId: string, tutorialId: string): Promise<UserTutorialProgress | null> => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const userProgress = getMockData<UserTutorialProgress>(STORAGE_USER_PROGRESS) || mockUserProgress;
+  const progress = userProgress.find(p => p.user_id === userId && p.tutorial_id === tutorialId);
+  
+  if (!progress) {
+    return null; // No progress found, but not an error
+  }
+  
+  return progress;
+};
+
+export const updateTutorialProgress = async (
+  userId: string,
+  tutorialId: string,
+  currentLessonId: string,
+  progress: TutorialProgress,
+  completedLessons: number
+): Promise<UserTutorialProgress | null> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  const userProgress = getMockData<UserTutorialProgress>(STORAGE_USER_PROGRESS) || mockUserProgress;
+  const tutorialLessons = getMockData<TutorialLesson>(STORAGE_TUTORIAL_LESSONS) || mockTutorialLessons;
+  const totalLessons = tutorialLessons.filter(l => l.tutorial_id === tutorialId).length;
+  
+  let existingProgress = userProgress.find(p => p.user_id === userId && p.tutorial_id === tutorialId);
+  
+  if (!existingProgress) {
+    // Create new progress entry
+    existingProgress = {
+      id: generateMockId(),
+      user_id: userId,
+      tutorial_id: tutorialId,
+      current_lesson_id: currentLessonId,
+      progress,
+      completed_lessons: completedLessons,
+      total_lessons: totalLessons,
+      last_accessed: new Date().toISOString(),
+      completion_date: progress === 'completed' ? new Date().toISOString() : null,
+      certificate_issued: progress === 'completed'
+    };
+    
+    userProgress.push(existingProgress);
+  } else {
+    // Update existing progress
+    const index = userProgress.findIndex(p => p.id === existingProgress?.id);
+    
+    userProgress[index] = {
+      ...existingProgress,
+      current_lesson_id: currentLessonId,
+      progress,
+      completed_lessons: completedLessons,
+      last_accessed: new Date().toISOString(),
+      completion_date: progress === 'completed' ? new Date().toISOString() : existingProgress.completion_date,
+      certificate_issued: progress === 'completed' ? true : existingProgress.certificate_issued
+    };
+  }
+  
+  // Save updated progress
+  setMockData(STORAGE_USER_PROGRESS, userProgress);
+  
+  const updatedProgress = userProgress.find(p => p.user_id === userId && p.tutorial_id === tutorialId);
+  return handleSuccess(updatedProgress!, 'Progress updated successfully');
+};
+
+// Notification Management
+export const getUserNotifications = async (userId: string, limit: number = 10): Promise<Notification[]> => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const notifications = getMockData<Notification>(STORAGE_NOTIFICATIONS) || mockNotifications;
+  
+  return notifications
+    .filter(n => n.user_id === userId)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, limit);
+};
+
+export const markNotificationAsRead = async (notificationId: string): Promise<boolean> => {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  const notifications = getMockData<Notification>(STORAGE_NOTIFICATIONS) || mockNotifications;
+  const index = notifications.findIndex(n => n.id === notificationId);
+  
+  if (index === -1) {
+    return handleError(false, 'Notification not found');
+  }
+  
+  notifications[index] = {
+    ...notifications[index],
+    is_read: true
+  };
+  
+  setMockData(STORAGE_NOTIFICATIONS, notifications);
+  return handleSuccess(true, 'Notification marked as read');
+};
+
+export const markAllNotificationsAsRead = async (userId: string): Promise<boolean> => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const notifications = getMockData<Notification>(STORAGE_NOTIFICATIONS) || mockNotifications;
+  const updatedNotifications = notifications.map(n => 
+    n.user_id === userId ? { ...n, is_read: true } : n
+  );
+  
+  setMockData(STORAGE_NOTIFICATIONS, updatedNotifications);
+  return handleSuccess(true, 'All notifications marked as read');
+};
+
+// Real-time subscription simulation
+const subscriptionCallbacks: Record<string, ((payload: any) => void)[]> = {};
+
+export const subscribeToUserNotifications = (
+  userId: string,
+  callback: (payload: { new: Notification }) => void
+): (() => void) => {
+  // Create a unique channel key for this subscription
+  const channelKey = `notifications:${userId}`;
+  
+  if (!subscriptionCallbacks[channelKey]) {
+    subscriptionCallbacks[channelKey] = [];
+  }
+  
+  // Add the callback to our list
+  subscriptionCallbacks[channelKey].push(callback);
+  
+  // Return unsubscribe function
+  return () => {
+    if (subscriptionCallbacks[channelKey]) {
+      subscriptionCallbacks[channelKey] = subscriptionCallbacks[channelKey]
+        .filter(cb => cb !== callback);
+    }
+  };
+};
+
+// Helper function to trigger notification callbacks (for testing)
+export const simulateNewNotification = (userId: string, notification: Notification): void => {
+  const channelKey = `notifications:${userId}`;
+  
+  if (subscriptionCallbacks[channelKey]) {
+    // Add to local storage
+    const notifications = getMockData<Notification>(STORAGE_NOTIFICATIONS) || [];
+    notifications.push(notification);
+    setMockData(STORAGE_NOTIFICATIONS, notifications);
+    
+    // Notify all callbacks
+    subscriptionCallbacks[channelKey].forEach(callback => {
+      callback({ new: notification });
+    });
+  }
+};

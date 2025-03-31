@@ -19,7 +19,7 @@ import {
 export const generateMockId = (): string => `id_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
 export const generateMockVenue = (overrides: Partial<Venue> = {}): Venue => ({
-  id: generateMockId(),
+  id: overrides.id || generateMockId(),
   owner_id: overrides.owner_id || 'default-owner',
   name: overrides.name || 'Sample Venue',
   description: overrides.description || 'A great venue for sports',
@@ -37,12 +37,14 @@ export const generateMockVenue = (overrides: Partial<Venue> = {}): Venue => ({
 });
 
 export const generateMockProfile = (overrides: Partial<Profile> = {}): Profile => ({
+  // Use the properties from the Database type definition
   id: overrides.id || generateMockId(),
   username: overrides.username || 'user123',
   full_name: overrides.full_name || 'John Doe',
   avatar_url: overrides.avatar_url || null,
   created_at: overrides.created_at || new Date().toISOString(),
   updated_at: overrides.updated_at || new Date().toISOString(),
+  // Add the role which is our extension
   role: overrides.role || 'user'
 });
 
