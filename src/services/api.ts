@@ -1,6 +1,5 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/hooks/use-toast';
 import {
   Profile,
   Venue,
@@ -25,14 +24,14 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
       .single();
 
     if (error) throw error;
-    return data;
+    return data as Profile;
   } catch (error: any) {
     console.error('Error fetching profile:', error.message);
     return null;
   }
 };
 
-export const updateProfile = async (userId: string, updates: Partial<Profile>): Promise<Profile | null> => {
+export const updateProfile = async (userId: string, updates: Partial<Omit<Profile, 'id'>>): Promise<Profile | null> => {
   try {
     const { data, error } = await supabase
       .from('profiles')
@@ -43,7 +42,7 @@ export const updateProfile = async (userId: string, updates: Partial<Profile>): 
 
     if (error) throw error;
     toast.success('Profile updated successfully');
-    return data;
+    return data as Profile;
   } catch (error: any) {
     console.error('Error updating profile:', error.message);
     toast.error('Failed to update profile');

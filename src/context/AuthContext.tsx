@@ -3,7 +3,7 @@ import { createContext, useEffect, useState, useContext, ReactNode } from "react
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/hooks/use-toast';
 import { Profile, UserRole } from "@/types/supabase";
 
 type AuthContextType = {
@@ -44,8 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
       
-      setProfile(data);
-      setUserRole(data.role as UserRole);
+      setProfile(data as Profile);
+      // Safely access the role property, or default to 'user'
+      setUserRole((data as any)?.role as UserRole || 'user');
       return data;
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);

@@ -1,7 +1,10 @@
 
 import { Database } from '@/integrations/supabase/types';
 
-export type Profile = Database['public']['Tables']['profiles']['Row'];
+// Extend the Profile type to include role
+export interface Profile extends Database['public']['Tables']['profiles']['Row'] {
+  role?: UserRole;
+}
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
@@ -50,6 +53,13 @@ export interface VenueBooking {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // Add this optional property to fix the type error in UserBookingList
+  venue_details?: {
+    name: string;
+    location: string;
+    sport_type: string;
+    images: string[];
+  };
 }
 
 export interface Equipment {

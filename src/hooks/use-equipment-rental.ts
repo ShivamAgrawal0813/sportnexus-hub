@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { createRental, getUserRentals } from '@/services/api';
 import { EquipmentRental, BookingStatus, PaymentStatus } from '@/types/supabase';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/hooks/use-toast';
 
 export function useEquipmentRental() {
   const { user } = useAuth();
@@ -55,6 +55,7 @@ export function useEquipmentRental() {
         total_price: totalPrice,
         status: 'pending' as BookingStatus,
         payment_status: 'pending' as PaymentStatus,
+        payment_id: null, // Add missing payment_id property
         notes: notes || null
       };
 

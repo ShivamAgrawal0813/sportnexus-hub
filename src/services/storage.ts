@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/hooks/use-toast';
 
 // Constants for storage buckets
 export const BUCKET_PROFILES = 'profiles';
@@ -101,7 +101,7 @@ export const getSignedUrl = async (
 export const createUploadUrl = async (
   bucket: string,
   path: string,
-  options = { expiresIn: 60 }
+  options = { upsert: false }
 ) => {
   try {
     const { data, error } = await supabase.storage

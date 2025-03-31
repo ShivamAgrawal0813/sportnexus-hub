@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { createBooking, getUserBookings, updateBookingStatus } from '@/services/api';
 import { VenueBooking, BookingStatus } from '@/types/supabase';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/hooks/use-toast';
 
 export function useVenueBooking() {
   const { user } = useAuth();
@@ -55,6 +55,7 @@ export function useVenueBooking() {
         total_price: totalPrice,
         status: 'pending' as BookingStatus,
         payment_status: 'pending' as const,
+        payment_id: null, // Add missing payment_id property
         notes: notes || null
       };
 

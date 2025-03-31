@@ -55,7 +55,13 @@ export default function UserBookingList() {
   return (
     <div className="space-y-4">
       {userBookings.map((booking) => {
-        const venue = booking.venues as any;
+        // Fix: Properly type and access venue information 
+        const venue = booking.venue_details || { 
+          name: 'Venue', 
+          location: 'Location not available',
+          sport_type: '',
+          images: [] 
+        };
         
         return (
           <div 
