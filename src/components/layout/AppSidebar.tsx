@@ -14,6 +14,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/context/AuthContext';
 
 type NavItem = {
   title: string;
@@ -38,6 +39,7 @@ interface AppSidebarProps {
 
 export default function AppSidebar({ isSidebarOpen, toggleSidebar }: AppSidebarProps) {
   const isMobile = useIsMobile();
+  const { signOut } = useAuth();
 
   return (
     <div className={cn(
@@ -100,6 +102,7 @@ export default function AppSidebar({ isSidebarOpen, toggleSidebar }: AppSidebarP
               "w-full text-sidebar-foreground hover:bg-sidebar-primary/20 flex items-center",
               !isSidebarOpen && !isMobile && "justify-center"
             )}
+            onClick={signOut}
           >
             <LogOut size={20} />
             {(isSidebarOpen || isMobile) && <span className="ml-3">Logout</span>}
