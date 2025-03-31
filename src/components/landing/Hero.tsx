@@ -33,7 +33,7 @@ export default function Hero() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 button-hover-effect">
-                <Link to="/tutorials" className="flex items-center">
+                <Link to="/tutorials" className="flex items-center w-full justify-center text-white">
                   Access Tutorials <ArrowRight size={16} className="ml-2" />
                 </Link>
               </Button>
@@ -42,7 +42,7 @@ export default function Hero() {
           <div className="lg:pl-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
             <div className="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-2xl transform lg:rotate-2">
               <img 
-                src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src="/lovable-uploads/cc5d07b4-1356-418e-824a-963f21c3ef53.png" 
                 alt="Sports Venue" 
                 className="object-cover w-full h-full"
               />
@@ -50,21 +50,21 @@ export default function Hero() {
             <div className="mt-4 grid grid-cols-3 gap-2">
               <div className="aspect-1 rounded-lg overflow-hidden shadow-lg">
                 <img 
-                  src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  src="/lovable-uploads/70b9767d-d307-401c-a7e4-dd76eaf6ae7a.png" 
                   alt="Sports Equipment" 
                   className="object-cover w-full h-full"
                 />
               </div>
               <div className="aspect-1 rounded-lg overflow-hidden shadow-lg">
                 <img 
-                  src="https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  src="/lovable-uploads/26f21fe7-86eb-4714-82c7-1e521d16f858.png" 
                   alt="Sports Coach" 
                   className="object-cover w-full h-full"
                 />
               </div>
               <div className="aspect-1 rounded-lg overflow-hidden shadow-lg">
                 <img 
-                  src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  src="/lovable-uploads/325fc1cb-27c6-400d-8681-64f5c1a207e0.png" 
                   alt="Sports Team" 
                   className="object-cover w-full h-full"
                 />

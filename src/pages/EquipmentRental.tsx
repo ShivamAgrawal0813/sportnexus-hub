@@ -3,89 +3,89 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Filter, ShoppingCart, Tag, Clock, Star } from 'lucide-react';
+import { Search, Filter, Clock, DollarSign, Star, ShoppingCart } from 'lucide-react';
 
-// Mock data for equipment
-const equipment = [
+// Mock data for equipment rentals
+const equipments = [
   {
     id: 1,
     name: 'Professional Tennis Racket',
-    image: 'https://images.unsplash.com/photo-1617664455551-bf346a91439d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/lovable-uploads/70b9767d-d307-401c-a7e4-dd76eaf6ae7a.png',
     brand: 'Wilson Pro',
-    category: 'Tennis',
+    type: 'Tennis',
     pricePerDay: 15,
     rating: 4.8,
-    available: true,
+    minDays: 1,
   },
   {
     id: 2,
     name: 'Mountain Bike',
-    image: 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/lovable-uploads/4bf163ef-3892-4009-a58e-062b7d47a620.png',
     brand: 'Trek',
-    category: 'Cycling',
+    type: 'Cycling',
     pricePerDay: 35,
     rating: 4.6,
-    available: true,
+    minDays: 1,
   },
   {
     id: 3,
     name: 'Golf Club Set',
-    image: 'https://images.unsplash.com/photo-1535131749006-b7d58e7ffca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/lovable-uploads/26f21fe7-86eb-4714-82c7-1e521d16f858.png',
     brand: 'Callaway',
-    category: 'Golf',
+    type: 'Golf',
     pricePerDay: 45,
     rating: 4.9,
-    available: true,
+    minDays: 1,
   },
   {
     id: 4,
     name: 'Basketball',
-    image: 'https://images.unsplash.com/photo-1612118745260-9d083b54c8a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/lovable-uploads/dd2a46b0-337d-49ad-80de-cb4e8391c328.png',
     brand: 'Spalding',
-    category: 'Basketball',
+    type: 'Basketball',
     pricePerDay: 8,
     rating: 4.5,
-    available: false,
+    minDays: 1,
   },
   {
     id: 5,
-    name: 'Yoga Mat & Set',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    name: 'Yoga Kit',
+    image: '/lovable-uploads/cc5d07b4-1356-418e-824a-963f21c3ef53.png',
     brand: 'Lululemon',
-    category: 'Yoga',
-    pricePerDay: 10,
+    type: 'Yoga',
+    pricePerDay: 12,
     rating: 4.7,
-    available: true,
+    minDays: 1,
   },
   {
     id: 6,
-    name: 'Camping Equipment Set',
-    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    name: 'Camping Equipment',
+    image: '/lovable-uploads/325fc1cb-27c6-400d-8681-64f5c1a207e0.png',
     brand: 'North Face',
-    category: 'Camping',
-    pricePerDay: 55,
+    type: 'Outdoor',
+    pricePerDay: 65,
     rating: 4.8,
-    available: true,
+    minDays: 2,
   },
 ];
 
 export default function EquipmentRental() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredEquipment, setFilteredEquipment] = useState(equipment);
+  const [filteredEquipments, setFilteredEquipments] = useState(equipments);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
     
     if (term.trim() === '') {
-      setFilteredEquipment(equipment);
+      setFilteredEquipments(equipments);
     } else {
-      const filtered = equipment.filter(item => 
+      const filtered = equipments.filter(item => 
         item.name.toLowerCase().includes(term.toLowerCase()) || 
-        item.category.toLowerCase().includes(term.toLowerCase()) ||
+        item.type.toLowerCase().includes(term.toLowerCase()) ||
         item.brand.toLowerCase().includes(term.toLowerCase())
       );
-      setFilteredEquipment(filtered);
+      setFilteredEquipments(filtered);
     }
   };
 
@@ -110,55 +110,42 @@ export default function EquipmentRental() {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEquipment.map((item) => (
-          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-fade-in">
+        {filteredEquipments.map((equipment) => (
+          <Card key={equipment.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-fade-in">
             <div className="aspect-video relative overflow-hidden">
               <img 
-                src={item.image} 
-                alt={item.name} 
+                src={equipment.image} 
+                alt={equipment.name} 
                 className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
               />
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
                 <Star className="h-3 w-3 fill-sportnexus-orange text-sportnexus-orange" />
-                <span>{item.rating}</span>
+                <span>{equipment.rating}</span>
               </div>
-              {!item.available && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <span className="bg-white/90 text-sportnexus-blue px-4 py-2 rounded-full font-bold">
-                    Currently Unavailable
-                  </span>
-                </div>
-              )}
             </div>
             <CardContent className="p-4">
               <div className="mb-2">
-                <h3 className="text-lg font-semibold mb-1">{item.name}</h3>
-                <p className="text-muted-foreground text-sm">
-                  {item.brand}
-                </p>
+                <h3 className="text-lg font-semibold mb-1">{equipment.name}</h3>
+                <p className="text-muted-foreground text-sm">{equipment.brand}</p>
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-1 bg-muted rounded-full text-xs font-medium">
-                    {item.category}
+                    {equipment.type}
                   </span>
                   <span className="flex items-center text-sm text-muted-foreground">
                     <Clock className="h-3 w-3 mr-1" />
-                    Min 1 day
+                    Min {equipment.minDays} day
                   </span>
                 </div>
                 <div className="flex items-center font-medium">
-                  <Tag className="h-3 w-3 mr-1" />
-                  <span>${item.pricePerDay}/day</span>
+                  <DollarSign className="h-3 w-3" />
+                  <span>{equipment.pricePerDay}/day</span>
                 </div>
               </div>
-              <Button 
-                className="w-full mt-4" 
-                disabled={!item.available}
-                variant={item.available ? "default" : "outline"}
-              >
+              <Button className="w-full mt-4 bg-sportnexus-orange hover:bg-sportnexus-lightOrange">
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                {item.available ? "Rent Now" : "Not Available"}
+                Rent Now
               </Button>
             </CardContent>
           </Card>

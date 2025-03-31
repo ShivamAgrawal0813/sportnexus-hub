@@ -42,17 +42,18 @@ export default function AppSidebar({ isSidebarOpen, toggleSidebar }: AppSidebarP
   return (
     <div className={cn(
       "fixed inset-y-0 left-0 z-50 flex flex-col bg-sidebar transition-transform duration-300 ease-in-out",
-      isSidebarOpen ? "translate-x-0" : isMobile ? "-translate-x-full" : "translate-x-0 w-[60px]"
+      isSidebarOpen ? "translate-x-0" : isMobile ? "-translate-x-full" : "translate-x-0 w-[60px]",
+      isMobile ? "w-[240px]" : isSidebarOpen ? "w-64" : "w-[60px]"
     )}>
       <Sidebar className={cn(
         "h-full flex flex-col border-r border-sidebar-border", 
-        isSidebarOpen ? "w-64" : ""
+        isSidebarOpen ? "w-full" : ""
       )}>
         <SidebarHeader className={cn(
           "flex p-4 justify-between items-center",
           !isSidebarOpen && !isMobile && "justify-center"
         )}>
-          {isSidebarOpen && (
+          {(isSidebarOpen || isMobile) && (
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-md bg-sportnexus-green flex items-center justify-center text-white font-bold">
                 SN
@@ -81,6 +82,7 @@ export default function AppSidebar({ isSidebarOpen, toggleSidebar }: AppSidebarP
                   isActive ? "bg-sidebar-primary text-sidebar-primary-foreground" : "text-sidebar-foreground",
                   !isSidebarOpen && !isMobile && "justify-center px-2"
                 )}
+                onClick={isMobile && !isSidebarOpen ? toggleSidebar : undefined}
               >
                 <item.icon size={20} className={cn(
                   "flex-shrink-0",
