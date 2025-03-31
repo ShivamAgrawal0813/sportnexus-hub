@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '@/components/landing/Hero';
 import Features from '@/components/landing/Features';
@@ -8,11 +7,9 @@ import Testimonials from '@/components/landing/Testimonials';
 import CallToAction from '@/components/landing/CallToAction';
 import Footer from '@/components/landing/Footer';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ChevronRight } from 'lucide-react';
+import { Menu, ChevronRight } from 'lucide-react';
 
 export default function LandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
@@ -42,71 +39,11 @@ export default function LandingPage() {
                 Sign Up
               </Button>
             </Link>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-white md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X /> : <Menu />}
+            <Button variant="ghost" size="icon" className="text-white md:hidden">
+              <Menu />
             </Button>
           </div>
         </div>
-        
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-sportnexus-blue border-t border-sportnexus-darkBlue mt-4">
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
-              <Link 
-                to="/" 
-                className="text-white hover:text-sportnexus-green py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                to="/venues" 
-                className="text-white hover:text-sportnexus-green py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Venues
-              </Link>
-              <Link 
-                to="/equipment" 
-                className="text-white hover:text-sportnexus-green py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Equipment
-              </Link>
-              <Link 
-                to="/tutorials" 
-                className="text-white hover:text-sportnexus-green py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Tutorials
-              </Link>
-              <Link 
-                to="/about" 
-                className="text-white hover:text-sportnexus-green py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                About
-              </Link>
-              <div className="flex gap-2 mt-2">
-                <Link to="/login" className="w-1/2" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full text-white border-white">
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/register" className="w-1/2" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full bg-sportnexus-green text-white">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
       </nav>
       
       {/* Sticky floating home button */}
@@ -119,7 +56,7 @@ export default function LandingPage() {
       </div>
 
       {/* Landing page content */}
-      <div className="flex-1 w-full">
+      <div className="flex-1">
         <Hero />
         <Features />
         <HowItWorks />

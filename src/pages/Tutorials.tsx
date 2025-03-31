@@ -3,81 +3,81 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Filter, Clock, Star, Video, Lock } from 'lucide-react';
+import { Search, Filter, Play, BookOpen, Video, Clock, Star, Lock } from 'lucide-react';
 
 // Mock data for tutorials
 const tutorials = [
   {
     id: 1,
     title: 'Tennis Fundamentals for Beginners',
-    image: '/lovable-uploads/70b9767d-d307-401c-a7e4-dd76eaf6ae7a.png',
+    image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     instructor: 'Sarah Williams',
-    type: 'Tennis',
+    category: 'Tennis',
     level: 'Beginner',
-    duration: 45,
+    format: 'Video',
+    duration: '45 min',
     rating: 4.8,
-    isPremium: false,
-    format: 'Video'
+    premium: false,
   },
   {
     id: 2,
     title: 'Advanced Basketball Shooting Techniques',
-    image: '/lovable-uploads/dd2a46b0-337d-49ad-80de-cb4e8391c328.png',
+    image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     instructor: 'Michael Jordan',
-    type: 'Basketball',
+    category: 'Basketball',
     level: 'Advanced',
-    duration: 60,
+    format: 'Video',
+    duration: '60 min',
     rating: 4.9,
-    isPremium: true,
-    format: 'Video'
+    premium: true,
   },
   {
     id: 3,
     title: 'Yoga for Athletes: Improving Flexibility',
-    image: '/lovable-uploads/cc5d07b4-1356-418e-824a-963f21c3ef53.png',
+    image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     instructor: 'Emma Chen',
-    type: 'Yoga',
+    category: 'Yoga',
     level: 'Intermediate',
-    duration: 35,
+    format: 'Video',
+    duration: '35 min',
     rating: 4.7,
-    isPremium: false,
-    format: 'Video'
+    premium: false,
   },
   {
     id: 4,
     title: 'Golf Swing Mastery',
-    image: '/lovable-uploads/26f21fe7-86eb-4714-82c7-1e521d16f858.png',
-    instructor: 'Tom Woods',
-    type: 'Golf',
-    level: 'All Levels',
-    duration: 90,
+    image: 'https://images.unsplash.com/photo-1535131749006-b7d58e7ffca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    instructor: 'Tiger Woods',
+    category: 'Golf',
+    level: 'Intermediate',
+    format: 'Video',
+    duration: '75 min',
     rating: 4.9,
-    isPremium: true,
-    format: 'Video'
+    premium: true,
   },
   {
     id: 5,
-    title: 'Swimming Techniques for Triathletes',
-    image: '/lovable-uploads/4bf163ef-3892-4009-a58e-062b7d47a620.png',
-    instructor: 'James Miller',
-    type: 'Swimming',
-    level: 'Intermediate',
-    duration: 55,
+    title: 'Swimming Techniques for Beginners',
+    image: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    instructor: 'Michael Phelps',
+    category: 'Swimming',
+    level: 'Beginner',
+    format: 'Video',
+    duration: '50 min',
     rating: 4.6,
-    isPremium: false,
-    format: 'Video'
+    premium: false,
   },
   {
     id: 6,
-    title: 'Group Fitness: Core Workout',
-    image: '/lovable-uploads/325fc1cb-27c6-400d-8681-64f5c1a207e0.png',
-    instructor: 'Lisa Johnson',
-    type: 'Fitness',
+    title: 'Marathon Training Guide',
+    image: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    instructor: 'Eliud Kipchoge',
+    category: 'Running',
     level: 'All Levels',
-    duration: 40,
+    format: 'Text & Video',
+    duration: '120 min',
     rating: 4.8,
-    isPremium: true,
-    format: 'Video'
+    premium: true,
   },
 ];
 
@@ -94,9 +94,9 @@ export default function Tutorials() {
     } else {
       const filtered = tutorials.filter(tutorial => 
         tutorial.title.toLowerCase().includes(term.toLowerCase()) || 
-        tutorial.type.toLowerCase().includes(term.toLowerCase()) ||
-        tutorial.instructor.toLowerCase().includes(term.toLowerCase()) ||
-        tutorial.level.toLowerCase().includes(term.toLowerCase())
+        tutorial.category.toLowerCase().includes(term.toLowerCase()) ||
+        tutorial.level.toLowerCase().includes(term.toLowerCase()) ||
+        tutorial.instructor.toLowerCase().includes(term.toLowerCase())
       );
       setFilteredTutorials(filtered);
     }
@@ -131,46 +131,54 @@ export default function Tutorials() {
                 alt={tutorial.title} 
                 className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
               />
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <Button variant="secondary" size="icon" className="rounded-full h-12 w-12">
+                  <Play className="h-6 w-6" />
+                </Button>
+              </div>
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
                 <Star className="h-3 w-3 fill-sportnexus-orange text-sportnexus-orange" />
                 <span>{tutorial.rating}</span>
               </div>
-              {tutorial.isPremium && (
+              {tutorial.premium && (
                 <div className="absolute top-3 left-3 bg-sportnexus-orange/90 text-white backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
                   <Lock className="h-3 w-3" />
-                  Premium
+                  <span>Premium</span>
                 </div>
               )}
             </div>
             <CardContent className="p-4">
               <div className="mb-2">
                 <h3 className="text-lg font-semibold mb-1">{tutorial.title}</h3>
-                <p className="text-muted-foreground text-sm">By {tutorial.instructor}</p>
+                <p className="text-muted-foreground text-sm">
+                  By {tutorial.instructor}
+                </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 mt-4">
+              <div className="flex flex-wrap items-center gap-2 mt-3">
                 <span className="px-2 py-1 bg-muted rounded-full text-xs font-medium">
-                  {tutorial.type}
+                  {tutorial.category}
                 </span>
                 <span className="px-2 py-1 bg-muted rounded-full text-xs font-medium">
                   {tutorial.level}
                 </span>
-                <span className="flex items-center text-sm text-muted-foreground ml-auto">
-                  <Video className="h-3 w-3 mr-1" />
+                <span className="flex items-center text-xs text-muted-foreground">
+                  {tutorial.format === 'Video' ? (
+                    <Video className="h-3 w-3 mr-1" />
+                  ) : (
+                    <BookOpen className="h-3 w-3 mr-1" />
+                  )}
                   {tutorial.format}
                 </span>
-                <span className="flex items-center text-sm text-muted-foreground">
+                <span className="flex items-center text-xs text-muted-foreground">
                   <Clock className="h-3 w-3 mr-1" />
-                  {tutorial.duration} min
+                  {tutorial.duration}
                 </span>
               </div>
               <Button 
-                className={`w-full mt-4 ${
-                  tutorial.isPremium 
-                    ? 'bg-sportnexus-green hover:bg-sportnexus-lightGreen' 
-                    : 'bg-sportnexus-blue hover:bg-sportnexus-darkBlue'
-                }`}
+                className="w-full mt-4" 
+                variant={tutorial.premium ? "secondary" : "default"}
               >
-                {tutorial.isPremium ? 'Unlock Premium' : 'Start Learning'}
+                {tutorial.premium ? "Unlock Premium" : "Start Learning"}
               </Button>
             </CardContent>
           </Card>

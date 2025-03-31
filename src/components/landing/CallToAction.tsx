@@ -16,12 +16,12 @@ export default function CallToAction() {
           </p>
           <div className="mt-8 flex justify-center gap-4 flex-col sm:flex-row">
             <Button size="lg" className="bg-sportnexus-green hover:bg-sportnexus-lightGreen button-hover-effect text-white">
-              <Link to="/register" className="flex items-center w-full justify-center">
+              <Link to="/register" className="flex items-center">
                 Sign up now <ArrowRight size={16} className="ml-2" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 button-hover-effect">
-              <Link to="/venues" className="flex items-center w-full justify-center text-white">
+              <Link to="/venues" className="flex items-center">
                 Browse venues <ArrowRight size={16} className="ml-2" />
               </Link>
             </Button>
