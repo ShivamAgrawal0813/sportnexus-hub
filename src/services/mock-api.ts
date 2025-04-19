@@ -1,4 +1,3 @@
-
 import { 
   Venue,
   VenueBooking,
@@ -229,5 +228,24 @@ export const getUserBookings = async (userId: string): Promise<VenueBookingWithD
     console.error('Failed to fetch bookings:', error);
     toast.error('Failed to fetch your bookings');
     return [];
+  }
+};
+
+export const updateBookingPayment = async (id: string, paymentId: string, status: PaymentStatus = 'paid'): Promise<VenueBooking> => {
+  try {
+    // Simulate API delay
+    await delay(600);
+    
+    const booking = mockVenueBookings.find(b => b.id === id) || mockVenueBookings[0];
+    return { 
+      ...booking, 
+      payment_id: paymentId, 
+      payment_status: status,
+      updated_at: new Date().toISOString() 
+    };
+  } catch (error) {
+    console.error('Failed to update booking payment:', error);
+    toast.error('Failed to update booking payment');
+    throw error;
   }
 };
