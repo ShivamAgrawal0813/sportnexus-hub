@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +9,6 @@ import { QueryProvider } from "@/components/providers/QueryProvider";
 
 // Import pages
 import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/Auth/LoginPage";
 import RegisterPage from "./pages/Auth/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import VenueBooking from "./pages/VenueBooking";
