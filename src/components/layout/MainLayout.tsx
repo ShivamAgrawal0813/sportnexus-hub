@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import AppSidebar from './AppSidebar';
@@ -18,9 +19,8 @@ export default function MainLayout() {
     <div className="min-h-screen flex flex-col bg-background">
       {isMobile && (
         <AppSidebar 
-          isSidebarOpen={isSidebarOpen} 
-          toggleSidebar={toggleSidebar}
-          className="mobile-nav"
+          isOpen={isSidebarOpen} 
+          onClose={() => setIsSidebarOpen(false)}
         />
       )}
       <div 
@@ -31,8 +31,8 @@ export default function MainLayout() {
       >
         {!isMobile && (
           <AppSidebar 
-            isSidebarOpen={isSidebarOpen} 
-            toggleSidebar={toggleSidebar} 
+            isOpen={isSidebarOpen} 
+            onClose={() => setIsSidebarOpen(false)} 
           />
         )}
         <div className={cn(

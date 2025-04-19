@@ -81,9 +81,10 @@ export const getUserBookings = async (userId: string): Promise<VenueBooking[]> =
     return [];
   }
 
+  // Transform the data to match our expected format
   return data.map(booking => ({
     ...booking,
-    venue_details: booking.venue
+    venue_details: booking.venue as any
   }));
 };
 
