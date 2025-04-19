@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -138,24 +137,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data.user) {
-        // Handle email confirmation message if needed
-        toast.success('Account created successfully! Please verify your email.');
-        
-        // Manually update the profile with more details
-        // Note: the handle_new_user trigger will create the basic profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            full_name: `${firstName} ${lastName}`,
-            username: email.split('@')[0],
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', data.user.id);
+        // Manually create a profile instead of updating it
+        try {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              full_name: `${firstName} ${lastName}`,
+              username: email.split('@')[0],
+              role: 'user',
+              email: email,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            });
 
-        if (profileError) {
-          console.error('Profile update error:', profileError);
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+            // Continue with signup despite profile error
+          }
+        } catch (profileCreationError) {
+          console.error('Profile creation exception:', profileCreationError);
+          // Continue with signup despite error
         }
 
+        // Show success message regardless of profile creation status
+        toast.success('Account created successfully! Please verify your email.');
         navigate('/login');
       }
     } catch (error: any) {

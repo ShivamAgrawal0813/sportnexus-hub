@@ -54,3 +54,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button"
 
 export { Button, buttonVariants }
+
+// sample code to debug RLS issue
+console.log("Checking RLS policies for storage buckets");

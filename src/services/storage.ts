@@ -115,3 +115,64 @@ export const createUploadUrl = async (
     return null;
   }
 };
+
+
+export const uploadImage = async (
+  file: File,
+  bucket: string,
+  folder: string = ''
+): Promise<{ url: string | null; error: string | null }> => {
+  try {
+    console.log(`Attempting to upload to ${bucket}/${folder}`);
+    
+    // Basic validation
+    if (!file) {
+      return { url: null, error: 'No file provided' };
+    }
+    
+    if (!bucket) {
+      return { url: null, error: 'No bucket specified' };
+    }
+    
+    // Make sure bucket exists
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const bucketExists = buckets?.some(b => b.name === bucket);
+    
+    if (!bucketExists) {
+      console.error(`Bucket '${bucket}' does not exist.`);
+      return { url: null, error: `Bucket '${bucket}' not found` };
+    }
+    
+    // Format path correctly for RLS
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    
+    // If folder (usually user ID) is provided, use as first path segment for RLS
+    const filePath = folder ? `${folder}/${fileName}` : fileName;
+    
+    console.log(`Uploading to ${bucket}/${filePath}`);
+    
+    // Upload the file
+    const { data, error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+    
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return { url: null, error: uploadError.message };
+    }
+    
+    // Get the public URL
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(data.path);
+    
+    return { url: urlData.publicUrl, error: null };
+  } catch (error: any) {
+    console.error('Error in uploadImage:', error);
+    return { url: null, error: error.message };
+  }
+};

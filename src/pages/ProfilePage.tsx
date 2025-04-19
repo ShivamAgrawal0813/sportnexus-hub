@@ -121,7 +121,13 @@ export default function ProfilePage() {
     setIsUploading(true);
     
     try {
+      console.log("Starting avatar upload process");
+      console.log(`User ID: ${user.id}`);
+      console.log(`Bucket: ${BUCKET_PROFILES}`);
+      
+      // Make sure to use the user.id as the folder path
       const result = await uploadImage(file, BUCKET_PROFILES, user.id);
+      console.log("Upload result:", result);
       
       if (result.url) {
         // Update form value

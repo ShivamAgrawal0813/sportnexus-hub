@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { BUCKET_PROFILES, BUCKET_VENUES, BUCKET_EQUIPMENT, BUCKET_TUTORIALS } from './storage';
@@ -30,9 +29,14 @@ export const uploadImage = async (
     
     // Generate a unique file name
     const fileExt = file.name.split('.').pop();
+    
+    // Format the path correctly for Supabase RLS
+    // Make sure folder (user ID) is the first path segment for RLS policies
     const filePath = folder 
       ? `${folder}/${Date.now()}.${fileExt}`
       : `${Date.now()}.${fileExt}`;
+      
+    console.log(`Uploading to ${bucket}/${filePath}`);
       
     // Upload the file
     const { data, error } = await supabase.storage
@@ -44,7 +48,7 @@ export const uploadImage = async (
       
     if (error) {
       console.error('Error uploading file:', error);
-      toast.error('Failed to upload image');
+      toast.error(`Upload failed: ${error.message}`);
       return { url: null, error: error.message };
     }
     
@@ -56,7 +60,7 @@ export const uploadImage = async (
     return { url: publicUrl, error: null };
   } catch (error: any) {
     console.error('Error in uploadImage:', error);
-    toast.error('Failed to upload image');
+    toast.error(`Failed to upload image: ${error.message}`);
     return { url: null, error: error.message };
   }
 };
