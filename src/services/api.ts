@@ -11,7 +11,8 @@ import type {
   TutorialLesson,
   UserTutorialProgress,
   Notification,
-  BookingStatus
+  BookingStatus,
+  TutorialProgress
 } from '@/types/supabase';
 
 // Profile Management
@@ -46,10 +47,33 @@ export const getVenues = async (): Promise<Venue[]> => {
 };
 
 export const createBooking = async (booking: Partial<VenueBooking>): Promise<VenueBooking | null> => {
-  // Remove the array wrap which was causing the type error
+  // Fixed: Ensure required fields are present before inserting
+  if (!booking.venue_id || !booking.user_id || !booking.booking_date || 
+      !booking.start_time || !booking.end_time || booking.total_price === undefined) {
+    console.error('Missing required booking fields');
+    toast.error('Failed to create booking: Missing required fields');
+    return null;
+  }
+
+  // Create a properly typed booking object with all required fields
+  const bookingData = {
+    venue_id: booking.venue_id,
+    user_id: booking.user_id,
+    booking_date: booking.booking_date,
+    start_time: booking.start_time,
+    end_time: booking.end_time,
+    total_price: booking.total_price,
+    status: booking.status || 'pending',
+    payment_status: booking.payment_status || 'pending',
+    payment_id: booking.payment_id,
+    notes: booking.notes,
+    created_at: booking.created_at,
+    updated_at: booking.updated_at
+  };
+
   const { data, error } = await supabase
     .from('venue_bookings')
-    .insert(booking)
+    .insert(bookingData)
     .select()
     .single();
 
@@ -127,10 +151,33 @@ export const getEquipment = async (): Promise<Equipment[]> => {
 };
 
 export const createRental = async (rental: Partial<EquipmentRental>): Promise<EquipmentRental | null> => {
-  // Remove the array wrap which was causing the type error
+  // Fixed: Ensure required fields are present before inserting
+  if (!rental.equipment_id || !rental.user_id || !rental.start_date || 
+      !rental.end_date || rental.total_price === undefined) {
+    console.error('Missing required rental fields');
+    toast.error('Failed to create rental: Missing required fields');
+    return null;
+  }
+
+  // Create a properly typed rental object with all required fields
+  const rentalData = {
+    equipment_id: rental.equipment_id,
+    user_id: rental.user_id,
+    start_date: rental.start_date,
+    end_date: rental.end_date,
+    quantity: rental.quantity || 1,
+    total_price: rental.total_price,
+    status: rental.status || 'pending',
+    payment_status: rental.payment_status || 'pending',
+    payment_id: rental.payment_id,
+    notes: rental.notes,
+    created_at: rental.created_at,
+    updated_at: rental.updated_at
+  };
+
   const { data, error } = await supabase
     .from('equipment_rentals')
-    .insert(rental)
+    .insert(rentalData)
     .select()
     .single();
 
@@ -237,7 +284,7 @@ export const updateTutorialProgress = async (
   userId: string,
   tutorialId: string,
   currentLessonId: string,
-  progress: 'not_started' | 'in_progress' | 'completed',
+  progress: TutorialProgress,
   completedLessons: number
 ): Promise<UserTutorialProgress | null> => {
   const { data, error } = await supabase

@@ -108,6 +108,7 @@ export function useTutorialProgress(tutorialId: string | undefined) {
       
       const nextLessonId = nextLesson?.id || lessonId;
       
+      // Fixed: Using proper TutorialProgress type instead of string
       const updatedProgress = await updateTutorialProgress(
         user.id,
         tutorial.id,
@@ -136,11 +137,12 @@ export function useTutorialProgress(tutorialId: string | undefined) {
     
     setUpdating(true);
     try {
+      // Fixed: Using the TutorialProgress type correctly
       const updatedProgress = await updateTutorialProgress(
         user.id,
         tutorial.id,
         lessonId,
-        progress.progress,
+        progress.progress as TutorialProgress,
         progress.completed_lessons
       );
       
