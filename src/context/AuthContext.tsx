@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -137,8 +138,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data.user) {
-        // Let the database trigger handle profile creation instead of manually creating it here
-        // The database has a trigger that will create the profile when a new user is created
+        // Let the database trigger handle profile creation
+        // The profile will be created automatically with the user's ID
         
         // Show success message
         toast.success('Account created successfully! Please verify your email.');
