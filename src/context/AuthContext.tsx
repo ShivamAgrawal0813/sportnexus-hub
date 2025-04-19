@@ -137,30 +137,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data.user) {
-        // Manually create a profile instead of updating it
-        try {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: data.user.id,
-              full_name: `${firstName} ${lastName}`,
-              username: email.split('@')[0],
-              role: 'user',
-              email: email,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            });
-
-          if (profileError) {
-            console.error('Profile creation error:', profileError);
-            // Continue with signup despite profile error
-          }
-        } catch (profileCreationError) {
-          console.error('Profile creation exception:', profileCreationError);
-          // Continue with signup despite error
-        }
-
-        // Show success message regardless of profile creation status
+        // Let the database trigger handle profile creation instead of manually creating it here
+        // The database has a trigger that will create the profile when a new user is created
+        
+        // Show success message
         toast.success('Account created successfully! Please verify your email.');
         navigate('/login');
       }

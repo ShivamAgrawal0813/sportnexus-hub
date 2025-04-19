@@ -9,6 +9,110 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      equipment: {
+        Row: {
+          brand: string | null
+          category: string
+          created_at: string | null
+          daily_price: number
+          description: string | null
+          id: string
+          images: string[] | null
+          monthly_price: number | null
+          name: string
+          owner_id: string | null
+          stock_quantity: number
+          updated_at: string | null
+          weekly_price: number | null
+        }
+        Insert: {
+          brand?: string | null
+          category: string
+          created_at?: string | null
+          daily_price: number
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          monthly_price?: number | null
+          name: string
+          owner_id?: string | null
+          stock_quantity?: number
+          updated_at?: string | null
+          weekly_price?: number | null
+        }
+        Update: {
+          brand?: string | null
+          category?: string
+          created_at?: string | null
+          daily_price?: number
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          monthly_price?: number | null
+          name?: string
+          owner_id?: string | null
+          stock_quantity?: number
+          updated_at?: string | null
+          weekly_price?: number | null
+        }
+        Relationships: []
+      }
+      equipment_rentals: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          equipment_id: string | null
+          id: string
+          notes: string | null
+          payment_id: string | null
+          payment_status: string
+          quantity: number
+          start_date: string
+          status: string
+          total_price: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          equipment_id?: string | null
+          id?: string
+          notes?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          quantity?: number
+          start_date: string
+          status?: string
+          total_price: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          equipment_id?: string | null
+          id?: string
+          notes?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          quantity?: number
+          start_date?: string
+          status?: string
+          total_price?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_rentals_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -33,6 +137,116 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      venue_bookings: {
+        Row: {
+          booking_date: string
+          created_at: string | null
+          end_time: string
+          id: string
+          notes: string | null
+          payment_id: string | null
+          payment_status: string
+          start_time: string
+          status: string
+          total_price: number
+          updated_at: string | null
+          user_id: string | null
+          venue_id: string | null
+        }
+        Insert: {
+          booking_date: string
+          created_at?: string | null
+          end_time: string
+          id?: string
+          notes?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          start_time: string
+          status?: string
+          total_price: number
+          updated_at?: string | null
+          user_id?: string | null
+          venue_id?: string | null
+        }
+        Update: {
+          booking_date?: string
+          created_at?: string | null
+          end_time?: string
+          id?: string
+          notes?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          start_time?: string
+          status?: string
+          total_price?: number
+          updated_at?: string | null
+          user_id?: string | null
+          venue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_bookings_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venues: {
+        Row: {
+          address: string | null
+          amenities: Json | null
+          capacity: number | null
+          created_at: string | null
+          description: string | null
+          full_day_price: number | null
+          half_day_price: number | null
+          hourly_price: number
+          id: string
+          images: string[] | null
+          location: string
+          name: string
+          owner_id: string | null
+          sport_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          amenities?: Json | null
+          capacity?: number | null
+          created_at?: string | null
+          description?: string | null
+          full_day_price?: number | null
+          half_day_price?: number | null
+          hourly_price: number
+          id?: string
+          images?: string[] | null
+          location: string
+          name: string
+          owner_id?: string | null
+          sport_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          amenities?: Json | null
+          capacity?: number | null
+          created_at?: string | null
+          description?: string | null
+          full_day_price?: number | null
+          half_day_price?: number | null
+          hourly_price?: number
+          id?: string
+          images?: string[] | null
+          location?: string
+          name?: string
+          owner_id?: string | null
+          sport_type?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
