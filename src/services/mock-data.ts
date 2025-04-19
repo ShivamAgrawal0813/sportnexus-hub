@@ -8,7 +8,11 @@ import {
   UserTutorialProgress,
   Notification,
   VenueBookingWithDetails,
-  EquipmentRentalWithDetails
+  EquipmentRentalWithDetails,
+  BookingStatus,
+  PaymentStatus,
+  TutorialProgress,
+  TutorialDifficulty
 } from '@/types/supabase';
 import { Json } from '@/integrations/supabase/database.types';
 
@@ -161,6 +165,7 @@ export const mockTutorials: Tutorial[] = [
     video_url: 'https://example.com/basketball-fundamentals',
     duration: 60,
     thumbnail: 'https://placehold.co/600x400?text=Basketball+Tutorial',
+    is_premium: false,
     created_at: '2023-01-01T00:00:00Z',
     updated_at: '2023-01-01T00:00:00Z'
   }
@@ -200,7 +205,9 @@ export const mockUserProgress: UserTutorialProgress[] = [
     total_lessons: 2,
     last_accessed: '2023-06-01T00:00:00Z',
     completion_date: null,
-    certificate_issued: false
+    certificate_issued: false,
+    created_at: '2023-06-01T00:00:00Z',
+    updated_at: '2023-06-01T00:00:00Z'
   }
 ];
 

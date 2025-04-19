@@ -133,7 +133,7 @@ const mockBookings: VenueBookingWithDetails[] = [
     end_time: '12:00',
     total_price: 50,
     status: 'confirmed',
-    payment_status: 'paid',
+    payment_status: 'completed',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     venue_details: {
@@ -226,4 +226,4 @@ export const getUserBookings = async (userId: string): Promise<VenueBookingWithD
     toast.error('Failed to fetch your bookings');
     return [];
   }
-}; 
+};
