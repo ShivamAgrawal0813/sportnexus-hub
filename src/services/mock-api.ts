@@ -1,3 +1,4 @@
+
 import { 
   Venue,
   VenueBooking,
@@ -134,7 +135,7 @@ const mockBookings: VenueBookingWithDetails[] = [
     end_time: '12:00',
     total_price: 50,
     status: 'confirmed',
-    payment_status: 'completed',
+    payment_status: 'paid',
     payment_id: 'pay_123456',
     notes: 'Standard tennis court booking',
     created_at: new Date().toISOString(),
@@ -236,7 +237,7 @@ export const updateBookingPayment = async (id: string, paymentId: string, status
     // Simulate API delay
     await delay(600);
     
-    const booking = mockVenueBookings.find(b => b.id === id) || mockVenueBookings[0];
+    const booking = mockBookings.find(b => b.id === id) || mockBookings[0];
     return { 
       ...booking, 
       payment_id: paymentId, 
