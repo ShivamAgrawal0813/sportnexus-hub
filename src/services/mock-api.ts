@@ -134,6 +134,8 @@ const mockBookings: VenueBookingWithDetails[] = [
     total_price: 50,
     status: 'confirmed',
     payment_status: 'completed',
+    payment_id: 'pay_123456',
+    notes: 'Standard tennis court booking',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     venue_details: {
