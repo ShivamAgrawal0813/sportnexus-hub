@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export default function NewLoginPage() {
@@ -7,12 +7,18 @@ export default function NewLoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await signIn(email, password);
+      // Navigate to the dashboard after successful login
+      navigate("/dashboard");
+    } catch (error) {
+      // Error is already handled in AuthContext with toast
+      console.error("Login failed:", error);
     } finally {
       setIsLoading(false);
     }

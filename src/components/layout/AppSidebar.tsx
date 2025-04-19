@@ -1,75 +1,145 @@
-
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Calendar, ListChecks, GraduationCap, Settings, User } from 'lucide-react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { 
+  Home, 
+  LayoutDashboard, 
+  CalendarDays, 
+  PackageOpen, 
+  GraduationCap, 
+  UserCircle, 
+  LogOut,
+  X
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
-interface AppSidebarProps {
+// Main navigation items that require authentication
+const sidebarItems = [
+  {
+    path: '/',
+    label: 'Home',
+    icon: Home,
+    description: 'Return to landing page'
+  },
+  {
+    path: '/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    description: 'View your dashboard'
+  },
+  {
+    path: '/venues',
+    label: 'Venue Booking',
+    icon: CalendarDays,
+    description: 'Book sports venues'
+  },
+  {
+    path: '/equipment',
+    label: 'Equipment Rental',
+    icon: PackageOpen,
+    description: 'Rent sports equipment'
+  },
+  {
+    path: '/tutorials',
+    label: 'Tutorials',
+    icon: GraduationCap,
+    description: 'Learn sports skills'
+  },
+  {
+    path: '/profile',
+    label: 'Profile',
+    icon: UserCircle,
+    description: 'Manage your profile'
+  }
+];
+
+type AppSidebarProps = {
   isOpen: boolean;
-  onClose: () => void;
-}
+  setIsOpen: (isOpen: boolean) => void;
+};
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen, onClose }) => {
+export default function AppSidebar({ isOpen, setIsOpen }: AppSidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+  
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
-  const sidebarItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: <Home className="h-4 w-4" /> },
-    { path: '/venues', label: 'Venues', icon: <Calendar className="h-4 w-4" /> },
-    { path: '/equipment', label: 'Equipment', icon: <ListChecks className="h-4 w-4" /> },
-    { path: '/tutorials', label: 'Tutorials', icon: <GraduationCap className="h-4 w-4" /> },
-    { path: '/profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
-    { path: '/settings', label: 'Settings', icon: <Settings className="h-4 w-4" /> },
-  ];
+  const closeSidebar = () => {
+    setIsOpen(false);
+  };
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Mobile backdrop */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/30 md:hidden"
-          onClick={onClose}
-          aria-hidden="true"
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={closeSidebar}
         />
       )}
-
-      {/* Sidebar Content */}
+      
+      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 flex-col border-r bg-white shadow-sm transition-transform duration-300 dark:border-gray-700 dark:bg-gray-800 md:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={cn(
+          "fixed top-0 left-0 z-40 h-full w-full max-w-[280px] bg-sportnexus-green text-white transition-transform duration-300 flex flex-col shadow-lg",
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        )}
       >
-        <div className="px-6 py-4">
-          <h1 className="text-xl font-bold">SportNexus</h1>
+        <div className="flex items-center justify-between h-16 px-6 py-4 border-b border-white/20">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-lg">SN</span>
+            <span className="font-semibold">SportNexus</span>
+          </div>
+          <Button variant="ghost" size="sm" onClick={closeSidebar} className="md:hidden text-white hover:bg-white/10 h-8 w-8 p-0">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close sidebar</span>
+          </Button>
         </div>
-
-        <nav className="flex-1 space-y-1 px-2 py-4">
+        
+        <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
           {sidebarItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => {
+                if (window.innerWidth < 768) {
+                  closeSidebar();
+                }
+              }}
               className={({ isActive }) =>
-                `sidebar-link ${isActive ? 'active' : ''}`
+                cn(
+                  "flex items-center gap-3 px-4 py-2 rounded-md text-base transition-colors",
+                  isActive 
+                    ? "bg-white/10 text-white" 
+                    : "text-white hover:bg-white/10"
+                )
               }
-              onClick={onClose}
             >
-              {item.icon}
+              <item.icon className="h-5 w-5" />
               <span>{item.label}</span>
             </NavLink>
           ))}
         </nav>
+        
+        <div className="p-4 mt-auto">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 text-white hover:bg-white/10 w-full px-4 py-2 rounded-md transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Logout</span>
+          </button>
+        </div>
       </aside>
-      <style>
-        {`
-          /* Add your styles here */
-          .sidebar-link {
-            @apply flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50;
-          }
-          .sidebar-link.active {
-            @apply bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50;
-          }
-        `}
-      </style>
     </>
   );
-};
-
-export default AppSidebar;
+}
