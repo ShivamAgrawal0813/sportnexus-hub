@@ -1,137 +1,134 @@
 import { 
   Venue, 
-  VenueBooking,
-  Equipment,
-  EquipmentRental,
-  Tutorial,
+  VenueBooking, 
+  Equipment, 
+  EquipmentRental, 
+  Tutorial, 
   TutorialLesson,
   UserTutorialProgress,
   Notification,
-  BookingStatus,
-  PaymentStatus,
-  TutorialDifficulty,
-  TutorialProgress
+  VenueBookingWithDetails,
+  EquipmentRentalWithDetails
 } from '@/types/supabase';
+import { Json } from '@/integrations/supabase/database.types';
 
-// Mock data to use until database is fully configured
+// Mock Venues
 export const mockVenues: Venue[] = [
   {
-    id: '1',
-    owner_id: 'owner1',
-    name: 'Downtown Sports Complex',
-    description: 'Modern sports facility with multiple courts',
+    id: 'venue-1',
+    owner_id: 'owner-1',
+    name: 'Downtown Tennis Court',
+    description: 'Professional tennis court in the heart of downtown',
     location: 'Downtown',
-    address: '123 Main St, City Center',
-    amenities: { parking: true, showers: true, lockers: true },
-    images: ['https://placehold.co/600x400?text=Sports+Complex'],
-    hourly_price: 50,
-    half_day_price: 200,
-    full_day_price: 350,
-    sport_type: 'basketball',
-    capacity: 50,
-    status: 'active',  // Add status field
-    created_at: '2023-01-01T00:00:00Z',
-    updated_at: '2023-01-01T00:00:00Z'
+    address: '123 Main St, Downtown',
+    amenities: { parking: true, showers: true, lockers: true } as Json,
+    images: ['/images/venues/tennis-court.jpg'],
+    hourly_price: 40,
+    half_day_price: 150,
+    full_day_price: 280,
+    sport_type: 'tennis',
+    capacity: 4,
+    created_at: '2023-01-15T10:00:00Z',
+    updated_at: '2023-01-15T10:00:00Z'
   },
   {
-    id: '2',
-    owner_id: 'owner2',
-    name: 'Riverside Tennis Club',
-    description: 'Premium tennis courts with river views',
-    location: 'Riverside',
-    address: '789 River Rd, Riverside',
-    amenities: { parking: true, showers: true, coaching: true },
-    images: ['https://placehold.co/600x400?text=Tennis+Club'],
-    hourly_price: 30,
-    half_day_price: 120,
-    full_day_price: 220,
-    sport_type: 'tennis',
-    capacity: 20,
-    status: 'active',  // Add status field
-    created_at: '2023-01-02T00:00:00Z',
-    updated_at: '2023-01-02T00:00:00Z'
+    id: 'venue-2',
+    owner_id: 'owner-1',
+    name: 'Suburban Basketball Court',
+    description: 'Full-size basketball court with premium flooring',
+    location: 'Suburban Area',
+    address: '456 Oak St, Suburbia',
+    amenities: { parking: true, showers: true, coaching: true } as Json,
+    images: ['/images/venues/basketball-court.jpg'],
+    hourly_price: 35,
+    half_day_price: 130,
+    full_day_price: 250,
+    sport_type: 'basketball',
+    capacity: 10,
+    created_at: '2023-01-16T10:00:00Z',
+    updated_at: '2023-01-16T10:00:00Z'
   }
 ];
 
-export const mockVenueBookings: VenueBooking[] = [
+// Mock Venue Bookings
+export const mockVenueBookings: VenueBookingWithDetails[] = [
   {
-    id: '1',
-    venue_id: '1',
-    user_id: 'user1',
-    booking_date: '2023-06-15',
+    id: 'booking-1',
+    venue_id: 'venue-1',
+    user_id: 'user-1',
+    booking_date: '2023-02-15',
     start_time: '14:00:00',
     end_time: '16:00:00',
-    total_price: 100,
-    status: 'confirmed' as BookingStatus,
-    payment_status: 'completed' as PaymentStatus,
-    payment_id: 'pay_123',
-    notes: null,
-    created_at: '2023-06-01T00:00:00Z',
-    updated_at: '2023-06-01T00:00:00Z',
+    total_price: 80,
+    status: 'confirmed',
+    payment_status: 'completed',
+    payment_id: 'pay_123456',
+    notes: 'Please have 4 rackets ready',
+    created_at: '2023-02-10T10:00:00Z',
+    updated_at: '2023-02-10T10:00:00Z',
     venue_details: {
-      name: 'Downtown Sports Complex',
+      name: 'Downtown Tennis Court',
       location: 'Downtown',
-      sport_type: 'basketball',
-      images: ['https://placehold.co/600x400?text=Sports+Complex']
+      sport_type: 'tennis',
+      images: ['/images/venues/tennis-court.jpg']
     }
   },
   {
-    id: '2',
-    venue_id: '2',
-    user_id: 'user1',
-    booking_date: '2023-06-20',
-    start_time: '10:00:00',
-    end_time: '12:00:00',
-    total_price: 60,
-    status: 'pending' as BookingStatus,
-    payment_status: 'pending' as PaymentStatus,
+    id: 'booking-2',
+    venue_id: 'venue-2',
+    user_id: 'user-1',
+    booking_date: '2023-02-20',
+    start_time: '18:00:00',
+    end_time: '20:00:00',
+    total_price: 70,
+    status: 'pending',
+    payment_status: 'pending',
     payment_id: null,
-    notes: 'Bringing own equipment',
-    created_at: '2023-06-05T00:00:00Z',
-    updated_at: '2023-06-05T00:00:00Z',
+    notes: null,
+    created_at: '2023-02-12T10:00:00Z',
+    updated_at: '2023-02-12T10:00:00Z',
     venue_details: {
-      name: 'Riverside Tennis Club',
-      location: 'Riverside',
-      sport_type: 'tennis',
-      images: ['https://placehold.co/600x400?text=Tennis+Club']
+      name: 'Suburban Basketball Court',
+      location: 'Suburban Area',
+      sport_type: 'basketball',
+      images: ['/images/venues/basketball-court.jpg']
     }
   }
 ];
 
+// Mock Equipment
 export const mockEquipment: Equipment[] = [
   {
-    id: '1',
-    owner_id: 'owner1',
-    name: 'Professional Basketball',
-    description: 'Official size and weight professional basketball',
-    category: 'basketball',
+    id: 'equipment-1',
+    owner_id: 'owner-1',
+    name: 'Professional Tennis Racket',
+    description: 'High-quality tennis racket for professional players',
+    category: 'tennis',
     brand: 'Wilson',
-    images: ['https://placehold.co/600x400?text=Basketball'],
+    images: ['/images/equipment/tennis-racket.jpg'],
     hourly_price: 5,
-    daily_price: 15,
-    weekly_price: 50,
+    daily_price: 20,
+    weekly_price: 100,
     total_quantity: 10,
     available_quantity: 8,
-    status: 'available',  // Add status field
-    created_at: '2023-01-01T00:00:00Z',
-    updated_at: '2023-01-01T00:00:00Z'
+    created_at: '2023-03-01T10:00:00Z',
+    updated_at: '2023-03-01T10:00:00Z'
   },
   {
-    id: '2',
-    owner_id: 'owner2',
-    name: 'Tennis Racket Set',
-    description: 'Premium tennis racket set with balls',
-    category: 'tennis',
-    brand: 'Babolat',
-    images: ['https://placehold.co/600x400?text=Tennis+Racket'],
-    hourly_price: 10,
-    daily_price: 30,
-    weekly_price: 100,
-    total_quantity: 5,
-    available_quantity: 3,
-    status: 'available',  // Add status field
-    created_at: '2023-01-02T00:00:00Z',
-    updated_at: '2023-01-02T00:00:00Z'
+    id: 'equipment-2',
+    owner_id: 'owner-1',
+    name: 'Basketball',
+    description: 'Official size and weight basketball',
+    category: 'basketball',
+    brand: 'Spalding',
+    images: ['/images/equipment/basketball.jpg'],
+    hourly_price: 2,
+    daily_price: 8,
+    weekly_price: 40,
+    total_quantity: 20,
+    available_quantity: 15,
+    created_at: '2023-03-02T10:00:00Z',
+    updated_at: '2023-03-02T10:00:00Z'
   }
 ];
 

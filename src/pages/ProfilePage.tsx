@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,7 +24,6 @@ import { VenueBookingWithDetails, EquipmentRentalWithDetails } from '@/types/sup
 const profileFormSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
   full_name: z.string().min(2, 'Full name is required'),
-  phone: z.string().optional(),
   avatar_url: z.string().optional(),
 });
 
@@ -46,7 +44,6 @@ export default function ProfilePage() {
     defaultValues: {
       username: profile?.username || '',
       full_name: profile?.full_name || '',
-      phone: profile?.phone || '',
       avatar_url: profile?.avatar_url || '',
     },
   });
@@ -57,7 +54,6 @@ export default function ProfilePage() {
       form.reset({
         username: profile.username || '',
         full_name: profile.full_name || '',
-        phone: profile.phone || '',
         avatar_url: profile.avatar_url || '',
       });
     }
@@ -103,7 +99,6 @@ export default function ProfilePage() {
       await updateUserProfile(user.id, {
         username: data.username,
         full_name: data.full_name,
-        phone: data.phone,
         avatar_url: data.avatar_url,
       });
       
@@ -195,12 +190,14 @@ export default function ProfilePage() {
                         <FormItem>
                           <FormLabel>Full Name</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="John Doe" 
-                              {...field} 
-                              className="w-full"
-                              icon={<User className="h-4 w-4 text-muted-foreground" />}
-                            />
+                            <div className="relative">
+                              <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input 
+                                placeholder="John Doe" 
+                                {...field} 
+                                className="pl-10 w-full"
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -214,32 +211,14 @@ export default function ProfilePage() {
                         <FormItem>
                           <FormLabel>Username</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="johndoe" 
-                              {...field} 
-                              className="w-full"
-                              icon={<User className="h-4 w-4 text-muted-foreground" />}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="+1 (555) 123-4567" 
-                              {...field} 
-                              value={field.value || ''}
-                              className="w-full"
-                              icon={<Phone className="h-4 w-4 text-muted-foreground" />}
-                            />
+                            <div className="relative">
+                              <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input 
+                                placeholder="johndoe" 
+                                {...field} 
+                                className="pl-10 w-full"
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -269,11 +248,11 @@ export default function ProfilePage() {
                 <div className="relative mb-6">
                   <Avatar className="h-32 w-32">
                     <AvatarImage 
-                      src={profile.avatar_url || ''} 
-                      alt={profile.full_name || user.email || 'User'} 
+                      src={profile?.avatar_url || ''} 
+                      alt={profile?.full_name || user?.email || 'User'} 
                     />
                     <AvatarFallback className="text-2xl">
-                      {profile.full_name?.split(' ').map(n => n[0]).join('') || user.email?.[0] || 'U'}
+                      {profile?.full_name?.split(' ').map(n => n[0]).join('') || user?.email?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="absolute bottom-0 right-0">
@@ -300,8 +279,8 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className="text-center mb-4">
-                  <h3 className="text-lg font-medium">{profile.full_name || 'User'}</h3>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <h3 className="text-lg font-medium">{profile?.full_name || 'User'}</h3>
+                  <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </div>
                 
                 <Separator className="my-4" />
@@ -311,13 +290,13 @@ export default function ProfilePage() {
                     <span className="text-sm text-muted-foreground">Email</span>
                     <span className="text-sm font-medium flex items-center">
                       <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
-                      {user.email}
+                      {user?.email}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Member Since</span>
                     <span className="text-sm font-medium">
-                      {new Date(profile.created_at).toLocaleDateString()}
+                      {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
                     </span>
                   </div>
                 </div>

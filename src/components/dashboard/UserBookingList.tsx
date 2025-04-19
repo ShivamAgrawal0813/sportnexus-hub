@@ -4,7 +4,7 @@ import { useVenueBooking } from '@/hooks/use-venue-booking';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookingStatus } from '@/types/supabase';
+import { BookingStatus, VenueBookingWithDetails } from '@/types/supabase';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 
 export default function UserBookingList() {
@@ -54,8 +54,8 @@ export default function UserBookingList() {
   
   return (
     <div className="space-y-4">
-      {userBookings.map((booking) => {
-        // Fix: Access venue_details instead of venues
+      {userBookings.map((booking: VenueBookingWithDetails) => {
+        // Access venue details safely
         const venueDetails = booking.venue_details || { 
           name: 'Venue', 
           location: 'Location not available',

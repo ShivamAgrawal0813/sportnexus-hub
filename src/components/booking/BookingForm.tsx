@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { CalendarIcon, ClockIcon, X } from 'lucide-react';
+import { CalendarIcon, ClockIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -28,7 +28,7 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
-import { Venue } from '@/types/supabase';
+import { Venue, BookingStatus, PaymentStatus } from '@/types/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { createBooking } from '@/services';
 import { toast } from '@/hooks/use-toast';
@@ -97,6 +97,9 @@ export function BookingForm({ venue, isOpen, onClose, onSuccess }: BookingFormPr
         start_time: values.startTime,
         end_time: values.endTime,
         total_price: totalPrice,
+        status: 'pending' as BookingStatus,
+        payment_status: 'pending' as PaymentStatus,
+        payment_id: null,
         notes: values.notes || null
       };
       
@@ -342,4 +345,4 @@ export function BookingForm({ venue, isOpen, onClose, onSuccess }: BookingFormPr
       </DialogContent>
     </Dialog>
   );
-} 
+}

@@ -1,123 +1,193 @@
 
-import { toast } from '@/hooks/use-toast';
 import { 
-  BookingStatus, 
+  Venue, 
+  Profile, 
+  VenueBooking, 
+  VenueBookingWithDetails,
   Equipment, 
   EquipmentRental, 
-  Notification, 
-  Profile, 
+  EquipmentRentalWithDetails,
   Tutorial, 
   TutorialLesson, 
-  UserRole, 
-  UserTutorialProgress, 
-  Venue, 
-  VenueAvailability, 
-  VenueBooking 
+  UserTutorialProgress,
+  BookingStatus,
+  PaymentStatus,
+  TutorialProgress
 } from '@/types/supabase';
-import { Json } from '@/integrations/supabase/database.types';
 
-// Mock data generators for development
-export const generateMockId = (): string => `id_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-
-export const generateMockVenue = (overrides: Partial<Venue> = {}): Venue => ({
-  id: overrides.id || generateMockId(),
-  owner_id: overrides.owner_id || 'default-owner',
-  name: overrides.name || 'Sample Venue',
-  description: overrides.description || 'A great venue for sports',
-  location: overrides.location || 'New York, NY',
-  address: overrides.address || '123 Main St',
-  amenities: overrides.amenities || { wifi: true, parking: true },
-  images: overrides.images || ['https://via.placeholder.com/300'],
-  hourly_price: overrides.hourly_price || 50,
-  half_day_price: overrides.half_day_price || 200,
-  full_day_price: overrides.full_day_price || 350,
-  sport_type: overrides.sport_type || 'basketball',
-  capacity: overrides.capacity || 20,
-  status: overrides.status || 'active', // Add status field
-  created_at: overrides.created_at || new Date().toISOString(),
-  updated_at: overrides.updated_at || new Date().toISOString(),
-});
-
-export const generateMockProfile = (overrides: Partial<Profile> = {}): Profile => ({
-  // Use the properties from the Database type definition
-  id: overrides.id || generateMockId(),
-  username: overrides.username || 'user123',
-  full_name: overrides.full_name || 'John Doe',
-  avatar_url: overrides.avatar_url || null,
-  phone: overrides.phone || null, // Add required phone field
-  preferences: overrides.preferences || null, // Add required preferences field
-  created_at: overrides.created_at || new Date().toISOString(),
-  updated_at: overrides.updated_at || new Date().toISOString(),
-  // Add the role which is our extension
-  role: overrides.role || 'user'
-});
-
-export const generateMockBooking = (overrides: Partial<VenueBooking> = {}): VenueBooking => ({
-  id: overrides.id || generateMockId(),
-  venue_id: overrides.venue_id || generateMockId(),
-  user_id: overrides.user_id || generateMockId(),
-  booking_date: overrides.booking_date || new Date().toISOString().split('T')[0],
-  start_time: overrides.start_time || '10:00:00',
-  end_time: overrides.end_time || '12:00:00',
-  total_price: overrides.total_price || 100,
-  status: overrides.status || 'pending',
-  payment_status: overrides.payment_status || 'pending',
-  payment_id: overrides.payment_id || null,
-  notes: overrides.notes || null,
-  created_at: overrides.created_at || new Date().toISOString(),
-  updated_at: overrides.updated_at || new Date().toISOString(),
-  venue_details: overrides.venue_details || {
-    name: 'Sample Venue',
-    location: 'New York, NY',
-    sport_type: 'basketball',
-    images: ['https://via.placeholder.com/300']
-  }
-});
-
-export const generateMockEquipment = (overrides: Partial<Equipment> = {}): Equipment => ({
-  id: overrides.id || generateMockId(),
-  owner_id: overrides.owner_id || generateMockId(),
-  name: overrides.name || 'Basketball',
-  description: overrides.description || 'Professional basketball in great condition',
-  category: overrides.category || 'ball',
-  brand: overrides.brand || 'Nike',
-  images: overrides.images || ['https://via.placeholder.com/300'],
-  hourly_price: overrides.hourly_price || 5,
-  daily_price: overrides.daily_price || 20,
-  weekly_price: overrides.weekly_price || 80,
-  total_quantity: overrides.total_quantity || 10,
-  available_quantity: overrides.available_quantity || 8,
-  status: overrides.status || 'available', // Add status field
-  created_at: overrides.created_at || new Date().toISOString(),
-  updated_at: overrides.updated_at || new Date().toISOString(),
-});
-
-export const generateMockRental = (overrides: Partial<EquipmentRental> = {}): EquipmentRental => ({
-  id: overrides.id || generateMockId(),
-  equipment_id: overrides.equipment_id || generateMockId(),
-  user_id: overrides.user_id || generateMockId(),
-  start_date: overrides.start_date || new Date().toISOString().split('T')[0],
-  end_date: overrides.end_date || new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0],
-  quantity: overrides.quantity || 1,
-  total_price: overrides.total_price || 20,
-  status: overrides.status || 'pending',
-  payment_status: overrides.payment_status || 'pending',
-  payment_id: overrides.payment_id || null,
-  notes: overrides.notes || null,
-  created_at: overrides.created_at || new Date().toISOString(),
-  updated_at: overrides.updated_at || new Date().toISOString(),
-});
-
-// Helper functions for API error handling
-export const handleError = (error: any, message: string = 'An error occurred'): null => {
-  console.error(`${message}:`, error);
-  toast.error(message);
-  return null;
+// Helper function to create mock venues
+export const createMockVenue = (partial: Partial<Venue>): Venue => {
+  return {
+    id: `venue-${Math.floor(Math.random() * 1000)}`,
+    owner_id: 'owner-1',
+    name: 'Default Venue',
+    description: 'A nice venue for sports',
+    location: 'City Center',
+    address: '123 Main St',
+    amenities: {
+      parking: true,
+      showers: true,
+      lockers: true
+    },
+    images: ['/images/venues/tennis-court.jpg'],
+    hourly_price: 50,
+    half_day_price: 200,
+    full_day_price: 350,
+    sport_type: 'tennis',
+    capacity: 4,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
 };
 
-export const handleSuccess = <T>(data: T, message?: string): T => {
-  if (message) {
-    toast.success(message);
-  }
-  return data;
+// Helper function to create mock user profiles
+export const createMockProfile = (partial: Partial<Profile>): Profile => {
+  return {
+    id: `user-${Math.floor(Math.random() * 1000)}`,
+    username: 'johndoe',
+    full_name: 'John Doe',
+    avatar_url: '/images/avatars/default.jpg',
+    role: 'user',
+    email: 'john@example.com',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
+};
+
+// Helper function to create mock venue bookings
+export const createMockVenueBooking = (partial: Partial<VenueBooking>): VenueBookingWithDetails => {
+  const booking: VenueBooking = {
+    id: `booking-${Math.floor(Math.random() * 1000)}`,
+    venue_id: 'venue-1',
+    user_id: 'user-1',
+    booking_date: new Date().toISOString().split('T')[0],
+    start_time: '14:00:00',
+    end_time: '16:00:00',
+    total_price: 100,
+    status: 'pending',
+    payment_status: 'pending',
+    payment_id: null,
+    notes: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
+
+  // Add venue details
+  return {
+    ...booking,
+    venue_details: {
+      name: 'Tennis Court',
+      location: 'Sports Center',
+      sport_type: 'tennis',
+      images: ['/images/venues/tennis-court.jpg']
+    }
+  };
+};
+
+// Helper function to create mock equipment
+export const createMockEquipment = (partial: Partial<Equipment>): Equipment => {
+  return {
+    id: `equipment-${Math.floor(Math.random() * 1000)}`,
+    owner_id: 'owner-1',
+    name: 'Tennis Racket',
+    description: 'Professional-grade tennis racket',
+    category: 'tennis',
+    brand: 'Wilson',
+    images: ['/images/equipment/tennis-racket.jpg'],
+    hourly_price: 5,
+    daily_price: 20,
+    weekly_price: 100,
+    total_quantity: 10,
+    available_quantity: 8,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
+};
+
+// Helper function to create mock equipment rentals
+export const createMockEquipmentRental = (partial: Partial<EquipmentRental>): EquipmentRentalWithDetails => {
+  const rental: EquipmentRental = {
+    id: `rental-${Math.floor(Math.random() * 1000)}`,
+    equipment_id: 'equipment-1',
+    user_id: 'user-1',
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+    quantity: 1,
+    total_price: 60,
+    status: 'pending',
+    payment_status: 'pending',
+    payment_id: null,
+    notes: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
+
+  // Add equipment details
+  return {
+    ...rental,
+    equipment_details: {
+      name: 'Tennis Racket',
+      brand: 'Wilson',
+      category: 'tennis',
+      images: ['/images/equipment/tennis-racket.jpg']
+    }
+  };
+};
+
+// Helper function to create mock tutorials
+export const createMockTutorial = (partial: Partial<Tutorial>): Tutorial => {
+  return {
+    id: `tutorial-${Math.floor(Math.random() * 1000)}`,
+    title: 'Tennis Fundamentals',
+    description: 'Learn the basics of playing tennis',
+    sport_category: 'tennis',
+    difficulty: 'beginner',
+    instructor_id: 'instructor-1',
+    video_url: 'https://example.com/tennis-basics.mp4',
+    thumbnail: '/images/tutorials/tennis-fundamentals.jpg',
+    duration: 45,
+    is_premium: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
+};
+
+// Helper function to create mock tutorial lessons
+export const createMockTutorialLesson = (partial: Partial<TutorialLesson>): TutorialLesson => {
+  return {
+    id: `lesson-${Math.floor(Math.random() * 1000)}`,
+    tutorial_id: 'tutorial-1',
+    title: 'Getting Started with Tennis',
+    description: 'Introduction to tennis equipment and basic stance',
+    video_url: 'https://example.com/tennis-intro.mp4',
+    duration: 10,
+    sequence_order: 1,
+    created_at: new Date().toISOString(),
+    ...partial
+  };
+};
+
+// Helper function to create mock user tutorial progress
+export const createMockUserTutorialProgress = (partial: Partial<UserTutorialProgress>): UserTutorialProgress => {
+  return {
+    id: `progress-${Math.floor(Math.random() * 1000)}`,
+    user_id: 'user-1',
+    tutorial_id: 'tutorial-1',
+    current_lesson_id: 'lesson-1',
+    progress: 'in_progress',
+    completed_lessons: 2,
+    total_lessons: 5,
+    last_accessed: new Date().toISOString(),
+    completion_date: null,
+    certificate_issued: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...partial
+  };
 };

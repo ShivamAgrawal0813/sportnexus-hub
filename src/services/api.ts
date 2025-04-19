@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { 
@@ -13,6 +12,7 @@ import {
   UserTutorialProgress,
   Notification,
   BookingStatus,
+  PaymentStatus,
   TutorialProgress,
   TutorialWithLessons,
   Profile
@@ -294,7 +294,7 @@ export const updateBookingStatus = async (bookingId: string, status: BookingStat
   }
 };
 
-export const updateBookingPayment = async (bookingId: string, paymentId: string, paymentStatus: string = 'completed'): Promise<VenueBooking | null> => {
+export const updateBookingPayment = async (bookingId: string, paymentId: string, paymentStatus: PaymentStatus = 'completed'): Promise<VenueBooking | null> => {
   try {
     const { data, error } = await supabase
       .from('venue_bookings')
@@ -542,7 +542,7 @@ export const updateRentalStatus = async (rentalId: string, status: BookingStatus
   }
 };
 
-export const updateRentalPayment = async (rentalId: string, paymentId: string, paymentStatus: string = 'completed'): Promise<EquipmentRental | null> => {
+export const updateRentalPayment = async (rentalId: string, paymentId: string, paymentStatus: PaymentStatus = 'completed'): Promise<EquipmentRental | null> => {
   try {
     const { data, error } = await supabase
       .from('equipment_rentals')
