@@ -1,5 +1,6 @@
 
 import { Database } from '@/integrations/supabase/database.types';
+import { Json } from '@/integrations/supabase/database.types';
 
 // Define the Profile type based on the database schema
 export type Profile = Database['public']['Tables']['profiles']['Row'];

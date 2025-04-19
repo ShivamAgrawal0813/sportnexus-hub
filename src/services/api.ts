@@ -10,7 +10,8 @@ import type {
   Tutorial,
   TutorialLesson,
   UserTutorialProgress,
-  Notification
+  Notification,
+  BookingStatus
 } from '@/types/supabase';
 
 // Profile Management
@@ -45,9 +46,10 @@ export const getVenues = async (): Promise<Venue[]> => {
 };
 
 export const createBooking = async (booking: Partial<VenueBooking>): Promise<VenueBooking | null> => {
+  // Remove the array wrap which was causing the type error
   const { data, error } = await supabase
     .from('venue_bookings')
-    .insert([booking])
+    .insert(booking)
     .select()
     .single();
 
@@ -90,7 +92,7 @@ export const getUserBookings = async (userId: string): Promise<VenueBooking[]> =
 
 export const updateBookingStatus = async (
   bookingId: string,
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  status: BookingStatus
 ): Promise<VenueBooking | null> => {
   const { data, error } = await supabase
     .from('venue_bookings')
@@ -125,9 +127,10 @@ export const getEquipment = async (): Promise<Equipment[]> => {
 };
 
 export const createRental = async (rental: Partial<EquipmentRental>): Promise<EquipmentRental | null> => {
+  // Remove the array wrap which was causing the type error
   const { data, error } = await supabase
     .from('equipment_rentals')
-    .insert([rental])
+    .insert(rental)
     .select()
     .single();
 

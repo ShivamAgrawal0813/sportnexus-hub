@@ -69,7 +69,7 @@ export function useTutorialProgress(tutorialId: string | undefined) {
         user.id,
         tutorial.id,
         firstLesson.id,
-        'in_progress',
+        'in_progress' as TutorialProgress,
         0
       );
       

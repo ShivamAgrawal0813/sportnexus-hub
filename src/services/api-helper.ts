@@ -14,6 +14,7 @@ import {
   VenueAvailability, 
   VenueBooking 
 } from '@/types/supabase';
+import { Json } from '@/integrations/supabase/database.types';
 
 // Mock data generators for development
 export const generateMockId = (): string => `id_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
@@ -32,6 +33,7 @@ export const generateMockVenue = (overrides: Partial<Venue> = {}): Venue => ({
   full_day_price: overrides.full_day_price || 350,
   sport_type: overrides.sport_type || 'basketball',
   capacity: overrides.capacity || 20,
+  status: overrides.status || 'active', // Add status field
   created_at: overrides.created_at || new Date().toISOString(),
   updated_at: overrides.updated_at || new Date().toISOString(),
 });
@@ -42,6 +44,8 @@ export const generateMockProfile = (overrides: Partial<Profile> = {}): Profile =
   username: overrides.username || 'user123',
   full_name: overrides.full_name || 'John Doe',
   avatar_url: overrides.avatar_url || null,
+  phone: overrides.phone || null, // Add required phone field
+  preferences: overrides.preferences || null, // Add required preferences field
   created_at: overrides.created_at || new Date().toISOString(),
   updated_at: overrides.updated_at || new Date().toISOString(),
   // Add the role which is our extension
@@ -83,6 +87,7 @@ export const generateMockEquipment = (overrides: Partial<Equipment> = {}): Equip
   weekly_price: overrides.weekly_price || 80,
   total_quantity: overrides.total_quantity || 10,
   available_quantity: overrides.available_quantity || 8,
+  status: overrides.status || 'available', // Add status field
   created_at: overrides.created_at || new Date().toISOString(),
   updated_at: overrides.updated_at || new Date().toISOString(),
 });

@@ -1,4 +1,3 @@
-
 import { 
   Venue, 
   VenueBooking,
@@ -30,6 +29,7 @@ export const mockVenues: Venue[] = [
     full_day_price: 350,
     sport_type: 'basketball',
     capacity: 50,
+    status: 'active',  // Add status field
     created_at: '2023-01-01T00:00:00Z',
     updated_at: '2023-01-01T00:00:00Z'
   },
@@ -47,6 +47,7 @@ export const mockVenues: Venue[] = [
     full_day_price: 220,
     sport_type: 'tennis',
     capacity: 20,
+    status: 'active',  // Add status field
     created_at: '2023-01-02T00:00:00Z',
     updated_at: '2023-01-02T00:00:00Z'
   }
@@ -111,6 +112,7 @@ export const mockEquipment: Equipment[] = [
     weekly_price: 50,
     total_quantity: 10,
     available_quantity: 8,
+    status: 'available',  // Add status field
     created_at: '2023-01-01T00:00:00Z',
     updated_at: '2023-01-01T00:00:00Z'
   },
@@ -127,6 +129,7 @@ export const mockEquipment: Equipment[] = [
     weekly_price: 100,
     total_quantity: 5,
     available_quantity: 3,
+    status: 'available',  // Add status field
     created_at: '2023-01-02T00:00:00Z',
     updated_at: '2023-01-02T00:00:00Z'
   }

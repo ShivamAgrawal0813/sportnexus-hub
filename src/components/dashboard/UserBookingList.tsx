@@ -88,7 +88,7 @@ export default function UserBookingList() {
               <div className="p-4 flex-1">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
                   <h3 className="text-lg font-semibold">{venueDetails.name}</h3>
-                  <Badge className={`${getStatusColor(booking.status)} self-start`}>
+                  <Badge className={`${getStatusColor(booking.status as BookingStatus)} self-start`}>
                     {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                   </Badge>
                 </div>

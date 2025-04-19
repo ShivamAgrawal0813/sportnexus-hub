@@ -48,8 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userProfile = data as Profile;
       setProfile(userProfile);
       
-      // Set user role from the profile
-      setUserRole(userProfile?.role || 'user');
+      // Set user role from the profile - ensure it's cast to UserRole type
+      setUserRole(userProfile?.role as UserRole || 'user');
       
       return userProfile;
     } catch (error) {
