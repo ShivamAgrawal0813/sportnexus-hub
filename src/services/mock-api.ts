@@ -1,3 +1,4 @@
+
 import { 
   Venue,
   VenueBooking,
@@ -12,7 +13,8 @@ import {
   BookingStatus,
   TutorialProgress,
   TutorialWithLessons,
-  Profile
+  Profile,
+  PaymentStatus
 } from '@/types/supabase';
 import { toast } from '@/hooks/use-toast';
 

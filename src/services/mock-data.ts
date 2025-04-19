@@ -1,3 +1,4 @@
+
 import { 
   Venue, 
   VenueBooking, 
@@ -65,7 +66,7 @@ export const mockVenueBookings: VenueBookingWithDetails[] = [
     end_time: '16:00:00',
     total_price: 80,
     status: 'confirmed',
-    payment_status: 'completed',
+    payment_status: 'paid',
     payment_id: 'pay_123456',
     notes: 'Please have 4 rackets ready',
     created_at: '2023-02-10T10:00:00Z',
@@ -110,11 +111,10 @@ export const mockEquipment: Equipment[] = [
     category: 'tennis',
     brand: 'Wilson',
     images: ['/images/equipment/tennis-racket.jpg'],
-    hourly_price: 5,
     daily_price: 20,
     weekly_price: 100,
-    total_quantity: 10,
-    available_quantity: 8,
+    monthly_price: null,
+    stock_quantity: 10,
     created_at: '2023-03-01T10:00:00Z',
     updated_at: '2023-03-01T10:00:00Z'
   },
@@ -126,11 +126,10 @@ export const mockEquipment: Equipment[] = [
     category: 'basketball',
     brand: 'Spalding',
     images: ['/images/equipment/basketball.jpg'],
-    hourly_price: 2,
     daily_price: 8,
     weekly_price: 40,
-    total_quantity: 20,
-    available_quantity: 15,
+    monthly_price: null,
+    stock_quantity: 20,
     created_at: '2023-03-02T10:00:00Z',
     updated_at: '2023-03-02T10:00:00Z'
   }
@@ -146,7 +145,7 @@ export const mockEquipmentRentals: EquipmentRental[] = [
     quantity: 2,
     total_price: 30,
     status: 'confirmed' as BookingStatus,
-    payment_status: 'completed' as PaymentStatus,
+    payment_status: 'paid' as PaymentStatus,
     payment_id: 'pay_456',
     notes: null,
     created_at: '2023-06-01T00:00:00Z',

@@ -1,4 +1,3 @@
-
 import { 
   createMockVenue, 
   createMockProfile, 
@@ -89,7 +88,7 @@ export const updateBookingStatus = async (id: string, status: BookingStatus): Pr
   return { ...booking, status, updated_at: new Date().toISOString() };
 };
 
-export const updateBookingPayment = async (id: string, paymentId: string, status: PaymentStatus = 'completed'): Promise<VenueBooking> => {
+export const updateBookingPayment = async (id: string, paymentId: string, status: PaymentStatus = 'paid'): Promise<VenueBooking> => {
   await delay(600);
   const booking = mockVenueBookings.find(b => b.id === id) || mockVenueBookings[0];
   return { 
@@ -152,7 +151,7 @@ export const updateRentalStatus = async (id: string, status: BookingStatus): Pro
   return { ...rental, status, updated_at: new Date().toISOString() };
 };
 
-export const updateRentalPayment = async (id: string, paymentId: string, status: PaymentStatus = 'completed'): Promise<EquipmentRental> => {
+export const updateRentalPayment = async (id: string, paymentId: string, status: PaymentStatus = 'paid'): Promise<EquipmentRental> => {
   await delay(600);
   const rental = createMockEquipmentRental({ id });
   return { 

@@ -1,4 +1,3 @@
-
 import { 
   Venue, 
   Profile, 
@@ -97,11 +96,10 @@ export const createMockEquipment = (partial: Partial<Equipment>): Equipment => {
     category: 'tennis',
     brand: 'Wilson',
     images: ['/images/equipment/tennis-racket.jpg'],
-    hourly_price: 5,
     daily_price: 20,
     weekly_price: 100,
-    total_quantity: 10,
-    available_quantity: 8,
+    monthly_price: null,
+    stock_quantity: 10,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     ...partial
@@ -131,6 +129,7 @@ export const createMockEquipmentRental = (partial: Partial<EquipmentRental>): Eq
   return {
     ...rental,
     equipment_details: {
+      id: 'equipment-1',
       name: 'Tennis Racket',
       brand: 'Wilson',
       category: 'tennis',

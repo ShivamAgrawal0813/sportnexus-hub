@@ -86,9 +86,9 @@ export function PaymentForm({ amount, itemId, itemType, onSuccess, onCancel }: P
       
       // Update the booking or rental with the payment ID
       if (itemType === 'booking') {
-        await updateBookingPayment(itemId, paymentId, 'completed');
+        await updateBookingPayment(itemId, paymentId, 'paid');
       } else {
-        await updateRentalPayment(itemId, paymentId, 'completed');
+        await updateRentalPayment(itemId, paymentId, 'paid');
       }
       
       toast.success('Payment successful!');
