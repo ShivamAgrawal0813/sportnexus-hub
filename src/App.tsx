@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,13 +9,14 @@ import { QueryProvider } from "@/components/providers/QueryProvider";
 
 // Import pages
 import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/Auth/LoginPage";
 import RegisterPage from "./pages/Auth/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import VenueBooking from "./pages/VenueBooking";
 import EquipmentRental from "./pages/EquipmentRental";
 import Tutorials from "./pages/Tutorials";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
-import NewLoginPage from "./pages/Auth/NewLoginPage";
 
 // Import layout and auth components
 import MainLayout from "./components/layout/MainLayout";
@@ -30,7 +32,7 @@ const App = () => (
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<NewLoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             
             {/* Protected routes that use the MainLayout with sidebar */}
@@ -44,7 +46,7 @@ const App = () => (
                 <Route path="/venues" element={<VenueBooking />} />
                 <Route path="/equipment" element={<EquipmentRental />} />
                 <Route path="/tutorials" element={<Tutorials />} />
-                <Route path="/profile" element={<Dashboard />} /> {/* Placeholder */}
+                <Route path="/profile" element={<ProfilePage />} />
               </Route>
             </Route>
             

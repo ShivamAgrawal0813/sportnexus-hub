@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { 
@@ -33,18 +34,39 @@ const handleSuccess = <T>(data: T, message?: string): T => {
 
 // Profile Management
 export const getUserProfile = async (userId: string): Promise<Profile | null> => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-  if (error) {
-    console.error('Error fetching profile:', error);
-    return null;
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    return handleError(error, 'Error fetching profile');
   }
+};
 
-  return data;
+export const updateUserProfile = async (userId: string, profile: Partial<Profile>): Promise<Profile | null> => {
+  try {
+    const updates = {
+      ...profile,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return handleSuccess(data, 'Profile updated successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to update profile');
+  }
 };
 
 // Venue Management
@@ -73,12 +95,91 @@ export const getVenues = async (filters?: any): Promise<Venue[]> => {
     if (error) throw error;
     return data as Venue[];
   } catch (error) {
-    return handleError(error, 'Failed to fetch venues') || [];
+    console.error('Error fetching venues:', error);
+    // Still return an empty array to not break the UI
+    return [];
+  }
+};
+
+export const getVenueById = async (venueId: string): Promise<Venue | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('venues')
+      .select('*')
+      .eq('id', venueId)
+      .single();
+    
+    if (error) throw error;
+    return data as Venue;
+  } catch (error) {
+    return handleError(error, 'Failed to fetch venue details');
+  }
+};
+
+export const createVenue = async (venue: Omit<Venue, 'id' | 'created_at' | 'updated_at'>): Promise<Venue | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('venues')
+      .insert({
+        ...venue,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return handleSuccess(data, 'Venue created successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to create venue');
+  }
+};
+
+export const updateVenue = async (venueId: string, venue: Partial<Venue>): Promise<Venue | null> => {
+  try {
+    const updates = {
+      ...venue,
+      updated_at: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('venues')
+      .update(updates)
+      .eq('id', venueId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return handleSuccess(data, 'Venue updated successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to update venue');
+  }
+};
+
+export const deleteVenue = async (venueId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('venues')
+      .delete()
+      .eq('id', venueId);
+    
+    if (error) throw error;
+    toast.success('Venue deleted successfully');
+    return true;
+  } catch (error) {
+    handleError(error, 'Failed to delete venue');
+    return false;
   }
 };
 
 export const createBooking = async (booking: Omit<VenueBooking, 'id' | 'created_at' | 'updated_at'>): Promise<VenueBookingWithDetails | null> => {
   try {
+    // Ensure required fields are present
+    if (!booking.venue_id || !booking.user_id || !booking.booking_date || 
+        !booking.start_time || !booking.end_time || !booking.total_price) {
+      throw new Error('Missing required booking fields');
+    }
+
     // First, check for booking conflicts
     const { data: existingBookings, error: conflictError } = await supabase
       .from('venue_bookings')
@@ -96,15 +197,17 @@ export const createBooking = async (booking: Omit<VenueBooking, 'id' | 'created_
     
     // If no conflicts, create the booking
     const now = new Date().toISOString();
+    const newBooking = {
+      ...booking,
+      status: booking.status || 'pending',
+      payment_status: booking.payment_status || 'pending',
+      created_at: now,
+      updated_at: now
+    };
+
     const { data, error } = await supabase
       .from('venue_bookings')
-      .insert({
-        ...booking,
-        status: 'pending',
-        payment_status: 'pending',
-        created_at: now,
-        updated_at: now
-      })
+      .insert(newBooking)
       .select()
       .single();
     
@@ -166,7 +269,8 @@ export const getUserBookings = async (userId: string): Promise<VenueBookingWithD
     
     return formattedData as VenueBookingWithDetails[];
   } catch (error) {
-    return handleError(error, 'Failed to fetch your bookings') || [];
+    console.error('Failed to fetch bookings:', error);
+    return [];
   }
 };
 
@@ -187,6 +291,27 @@ export const updateBookingStatus = async (bookingId: string, status: BookingStat
     return handleSuccess(data, `Booking ${status} successfully`);
   } catch (error) {
     return handleError(error, 'Failed to update booking status');
+  }
+};
+
+export const updateBookingPayment = async (bookingId: string, paymentId: string, paymentStatus: string = 'completed'): Promise<VenueBooking | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('venue_bookings')
+      .update({ 
+        payment_id: paymentId,
+        payment_status: paymentStatus,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', bookingId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    return handleSuccess(data, 'Payment updated successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to update payment information');
   }
 };
 
@@ -216,12 +341,90 @@ export const getEquipment = async (filters?: any): Promise<Equipment[]> => {
     if (error) throw error;
     return data as Equipment[];
   } catch (error) {
-    return handleError(error, 'Failed to fetch equipment') || [];
+    console.error('Error fetching equipment:', error);
+    return [];
+  }
+};
+
+export const getEquipmentById = async (equipmentId: string): Promise<Equipment | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('equipment')
+      .select('*')
+      .eq('id', equipmentId)
+      .single();
+    
+    if (error) throw error;
+    return data as Equipment;
+  } catch (error) {
+    return handleError(error, 'Failed to fetch equipment details');
+  }
+};
+
+export const createEquipment = async (equipment: Omit<Equipment, 'id' | 'created_at' | 'updated_at'>): Promise<Equipment | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('equipment')
+      .insert({
+        ...equipment,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return handleSuccess(data, 'Equipment created successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to create equipment');
+  }
+};
+
+export const updateEquipment = async (equipmentId: string, equipment: Partial<Equipment>): Promise<Equipment | null> => {
+  try {
+    const updates = {
+      ...equipment,
+      updated_at: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('equipment')
+      .update(updates)
+      .eq('id', equipmentId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return handleSuccess(data, 'Equipment updated successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to update equipment');
+  }
+};
+
+export const deleteEquipment = async (equipmentId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('equipment')
+      .delete()
+      .eq('id', equipmentId);
+    
+    if (error) throw error;
+    toast.success('Equipment deleted successfully');
+    return true;
+  } catch (error) {
+    handleError(error, 'Failed to delete equipment');
+    return false;
   }
 };
 
 export const createRental = async (rental: Omit<EquipmentRental, 'id' | 'created_at' | 'updated_at'>): Promise<EquipmentRentalWithDetails | null> => {
   try {
+    // Ensure required fields are present
+    if (!rental.equipment_id || !rental.user_id || !rental.start_date || 
+        !rental.end_date || !rental.total_price) {
+      throw new Error('Missing required rental fields');
+    }
+
     // First, check equipment availability
     const { data: equipment, error: equipmentError } = await supabase
       .from('equipment')
@@ -231,22 +434,25 @@ export const createRental = async (rental: Omit<EquipmentRental, 'id' | 'created
     
     if (equipmentError) throw equipmentError;
     
-    if (!equipment || equipment.available_quantity < rental.quantity) {
+    if (!equipment || equipment.available_quantity < (rental.quantity || 1)) {
       toast.error('Not enough equipment available for the requested quantity');
       return null;
     }
     
     // Create the rental
     const now = new Date().toISOString();
+    const newRental = {
+      ...rental,
+      quantity: rental.quantity || 1,
+      status: rental.status || 'pending',
+      payment_status: rental.payment_status || 'pending',
+      created_at: now,
+      updated_at: now
+    };
+
     const { data, error } = await supabase
       .from('equipment_rentals')
-      .insert({
-        ...rental,
-        status: 'pending',
-        payment_status: 'pending',
-        created_at: now,
-        updated_at: now
-      })
+      .insert(newRental)
       .select()
       .single();
     
@@ -256,7 +462,7 @@ export const createRental = async (rental: Omit<EquipmentRental, 'id' | 'created
     const { error: updateError } = await supabase
       .from('equipment')
       .update({ 
-        available_quantity: equipment.available_quantity - rental.quantity,
+        available_quantity: equipment.available_quantity - (rental.quantity || 1),
         updated_at: now
       })
       .eq('id', rental.equipment_id);
@@ -311,7 +517,49 @@ export const getUserRentals = async (userId: string): Promise<EquipmentRentalWit
     
     return formattedData as EquipmentRentalWithDetails[];
   } catch (error) {
-    return handleError(error, 'Failed to fetch your rentals') || [];
+    console.error('Failed to fetch rentals:', error);
+    return [];
+  }
+};
+
+export const updateRentalStatus = async (rentalId: string, status: BookingStatus): Promise<EquipmentRental | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('equipment_rentals')
+      .update({ 
+        status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', rentalId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    return handleSuccess(data, `Rental ${status} successfully`);
+  } catch (error) {
+    return handleError(error, 'Failed to update rental status');
+  }
+};
+
+export const updateRentalPayment = async (rentalId: string, paymentId: string, paymentStatus: string = 'completed'): Promise<EquipmentRental | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('equipment_rentals')
+      .update({ 
+        payment_id: paymentId,
+        payment_status: paymentStatus,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', rentalId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    return handleSuccess(data, 'Payment updated successfully');
+  } catch (error) {
+    return handleError(error, 'Failed to update payment information');
   }
 };
 
@@ -338,7 +586,8 @@ export const getTutorials = async (filters?: any): Promise<Tutorial[]> => {
     if (error) throw error;
     return data as Tutorial[];
   } catch (error) {
-    return handleError(error, 'Failed to fetch tutorials') || [];
+    console.error('Failed to fetch tutorials:', error);
+    return [];
   }
 };
 
@@ -381,19 +630,15 @@ export const getUserTutorialProgress = async (userId: string, tutorialId: string
       .select('*')
       .eq('user_id', userId)
       .eq('tutorial_id', tutorialId)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to avoid errors when no progress exists
     
-    if (error) {
-      // If no progress exists, return null without error
-      if (error.code === 'PGRST116') {
-        return null;
-      }
-      throw error;
-    }
+    // Return null if no progress exists without error
+    if (error) throw error;
     
     return data;
   } catch (error) {
-    return handleError(error, 'Failed to fetch tutorial progress');
+    console.error('Failed to fetch tutorial progress:', error);
+    return null;
   }
 };
 
@@ -411,7 +656,7 @@ export const updateTutorialProgress = async (
       .select('*')
       .eq('user_id', userId)
       .eq('tutorial_id', tutorialId)
-      .single();
+      .maybeSingle();
     
     const now = new Date().toISOString();
     
@@ -485,7 +730,8 @@ export const getUserNotifications = async (userId: string, limit: number = 10): 
     if (error) throw error;
     return data;
   } catch (error) {
-    return handleError(error, 'Failed to fetch notifications') || [];
+    console.error('Failed to fetch notifications:', error);
+    return [];
   }
 };
 

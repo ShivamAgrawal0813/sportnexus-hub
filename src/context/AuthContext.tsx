@@ -1,64 +1,120 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-
-// Mock user for development
-const MOCK_USER = {
-  id: 'mock-user-1',
-  email: 'user@example.com',
-  first_name: 'Demo',
-  last_name: 'User',
-  avatar_url: null
-};
-
-type User = {
-  id: string;
-  email: string;
-  first_name: string | null;
-  last_name: string | null;
-  avatar_url: string | null;
-} | null;
+import { Session, User } from '@supabase/supabase-js';
+import { UserRole, Profile } from '@/types/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
-  user: User;
+  user: User | null;
+  profile: Profile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  session: Session | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // Fetch user profile data
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
+      }
+
+      setProfile(data);
+      return data;
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+      return null;
+    }
+  };
+
+  // Refresh the user's profile data
+  const refreshProfile = async () => {
+    if (user?.id) {
+      await fetchUserProfile(user.id);
+    }
+  };
 
   useEffect(() => {
-    // Simulate loading the user
+    // Set initial loading state
     setIsLoading(true);
-    
-    // Simulate API delay
-    setTimeout(() => {
-      // For development, always set the mock user
-      setUser(MOCK_USER);
+
+    // First set up the auth listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        
+        // When auth state changes, fetch profile in a separate event loop
+        if (currentSession?.user) {
+          setTimeout(() => {
+            fetchUserProfile(currentSession.user.id);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+
+        setIsLoading(false);
+      }
+    );
+
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      
+      if (currentSession?.user) {
+        fetchUserProfile(currentSession.user.id);
+      }
+      
       setIsLoading(false);
-    }, 500);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // Mock auth functions
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // In development, always succeed with mock user
-      setUser(MOCK_USER);
-      toast.success('Signed in successfully');
-    } catch (error) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        await fetchUserProfile(data.user.id);
+        toast.success('Signed in successfully');
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
       console.error('Sign in error:', error);
-      toast.error('Failed to sign in');
+      toast.error(error.message || 'Failed to sign in');
       throw error;
     } finally {
       setIsLoading(false);
@@ -68,21 +124,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     setIsLoading(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // In development, always succeed with mock user
-      const newUser = {
-        ...MOCK_USER,
+      // Create user in Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
         email,
-        first_name: firstName,
-        last_name: lastName
-      };
-      setUser(newUser);
-      toast.success('Account created successfully');
-    } catch (error) {
+        password,
+        options: {
+          data: {
+            full_name: `${firstName} ${lastName}`
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Handle email confirmation message if needed
+        toast.success('Account created successfully! Please verify your email.');
+        
+        // Manually update the profile with more details
+        // Note: the handle_new_user trigger will create the basic profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            full_name: `${firstName} ${lastName}`,
+            username: email.split('@')[0],
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', data.user.id);
+
+        if (profileError) {
+          console.error('Profile update error:', profileError);
+        }
+
+        navigate('/login');
+      }
+    } catch (error: any) {
       console.error('Sign up error:', error);
-      toast.error('Failed to create account');
+      toast.error(error.message || 'Failed to create account');
       throw error;
     } finally {
       setIsLoading(false);
@@ -92,15 +170,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     setIsLoading(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       
-      // Clear user
-      setUser(null);
       toast.success('Signed out successfully');
-    } catch (error) {
+      navigate('/login');
+    } catch (error: any) {
       console.error('Sign out error:', error);
-      toast.error('Failed to sign out');
+      toast.error(error.message || 'Failed to sign out');
     } finally {
       setIsLoading(false);
     }
@@ -108,13 +185,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`
+      });
       
-      toast.success('Password reset email sent');
-    } catch (error) {
+      if (error) throw error;
+      
+      toast.success('Password reset email sent. Please check your inbox.');
+    } catch (error: any) {
       console.error('Reset password error:', error);
-      toast.error('Failed to send password reset email');
+      toast.error(error.message || 'Failed to send password reset email');
       throw error;
     }
   };
@@ -123,12 +203,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider 
       value={{ 
         user, 
+        profile,
+        session,
         isLoading, 
         isAuthenticated: !!user,
         signIn, 
         signUp, 
         signOut,
-        resetPassword
+        resetPassword,
+        refreshProfile
       }}
     >
       {children}
